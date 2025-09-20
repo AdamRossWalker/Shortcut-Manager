@@ -1,5 +1,8 @@
 ﻿namespace ShortcutManager;
 
+/// <summary>
+/// Manages the system tray icon, popup menus, and loading the main window.
+/// </summary>
 public sealed class SystemTray : ApplicationContext
 {
     private readonly NotifyIcon notifyIcon;
@@ -21,19 +24,24 @@ public sealed class SystemTray : ApplicationContext
         };
 
         notifyIcon.MouseDown += OnMouseDown;
+
+        // If the user hasn't set us up yet, open the full window.
+        if (Shortcuts.Instance.TreeElements.Count == 0)
+            Open();
     }
     private void OnMouseDown(object? sender, MouseEventArgs eventArgs)
     { 
         if (eventArgs.Button != MouseButtons.Left)
             return;
 
-        MessageBox.Show("TODO: Shortcut menu here.");
+        // MessageBox.Show("TODO: Shortcut menu here.");
+        Exit(); // To make development easier for now.
     }
 
-    private void Open(object? sender, EventArgs eventArgs) => 
+    private void Open(object? sender = null, EventArgs? eventArgs = null) => 
         new MainForm().Show();
 
-    private void Exit(object? sender, EventArgs eventArgs)
+    private void Exit(object? sender = null, EventArgs? eventArgs = null)
     {
         notifyIcon.Visible = false;
         Application.Exit();

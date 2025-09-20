@@ -1,5 +1,8 @@
 namespace ShortcutManager;
 
+/// <summary>
+/// Loads the system tray icon instead of the full window.
+/// </summary>
 public static class Program
 {
     /// <summary>
