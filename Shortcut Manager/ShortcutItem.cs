@@ -1,6 +1,6 @@
 ﻿namespace ShortcutManager;
 
-public sealed class Shortcut : ITreeElement
+public sealed class ShortcutItem : IShortcutOrFolder
 {
     public string? Name { get; set; }
 

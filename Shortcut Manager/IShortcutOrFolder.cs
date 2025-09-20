@@ -2,9 +2,9 @@
 
 namespace ShortcutManager;
 
-[JsonDerivedType(typeof(Shortcut), typeDiscriminator: "Shortcut")]
+[JsonDerivedType(typeof(ShortcutItem), typeDiscriminator: "Shortcut")]
 [JsonDerivedType(typeof(ShortcutFolder), typeDiscriminator: "Folder")]
-public interface ITreeElement
+public interface IShortcutOrFolder
 {
     public string? Name { get; set; }
 

@@ -1,10 +1,10 @@
 ﻿namespace ShortcutManager;
 
-public sealed class ShortcutFolder : ITreeElement
+public sealed class ShortcutFolder : IShortcutOrFolder
 {
     public string? Name { get; set; }
     
     public Icon? Icon { get; set; }
 
-    public List<ITreeElement> Children { get; } = [];
+    public List<IShortcutOrFolder> Children { get; } = [];
 }

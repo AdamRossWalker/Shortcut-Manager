@@ -5,31 +5,31 @@ namespace ShortcutManager;
 /// <summary>
 /// Holds the collection of shortcuts, and manages saving and loading them.
 /// </summary>
-public sealed class Shortcuts
+public sealed class ShortcutData
 {
-    private static readonly string filename = "Shortcuts.json";
+    private static readonly string filename = "ShortcutData.json";
 
-    public static Shortcuts Instance { get; } = new();
+    public static ShortcutData Instance { get; } = new();
 
-    public List<ITreeElement> TreeElements { get; }
+    public List<IShortcutOrFolder> Root { get; }
 
-    public Shortcuts()
+    public ShortcutData()
     {
         try
         {
-            TreeElements =
-                JsonSerializer.Deserialize<List<ITreeElement>>(
+            Root =
+                JsonSerializer.Deserialize<List<IShortcutOrFolder>>(
                     File.ReadAllText(filename))
                 ?? [];
         }
         catch (FileNotFoundException)
         {
-            TreeElements = [];
+            Root = [];
         }
     }
 
     public Task Save() => 
         File.WriteAllTextAsync(
             filename, 
-            JsonSerializer.Serialize(TreeElements));
+            JsonSerializer.Serialize(Root));
 }

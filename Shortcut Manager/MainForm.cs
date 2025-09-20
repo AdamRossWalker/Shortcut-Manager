@@ -16,20 +16,20 @@ public partial class MainForm : Form
 
     protected override void OnClosed(EventArgs e)
     {
-        Shortcuts.Instance.Save();
+        ShortcutData.Instance.Save();
         base.OnClosed(e);
     }
 
     private void RefreshTree()
     {
         MainTree.Nodes.Clear();
-        AddShortcutsToTree(parent: null, Shortcuts.Instance.TreeElements);
+        AddShortcutsToTree(parent: null, ShortcutData.Instance.Root);
         RefreshSelectedShortcut();
     }
 
     private void AddShortcutsToTree(
         TreeNode? parent,
-        List<ITreeElement> elements)
+        List<IShortcutOrFolder> elements)
     {
         var container = parent?.Nodes ?? MainTree.Nodes;
 
@@ -47,8 +47,8 @@ public partial class MainForm : Form
     private TreeNode? GetSelectedFolderTreeNode() =>
         GetParentFolderTreeNode(MainTree.SelectedNode);
 
-    private ITreeElement? CurrentItem =>
-        MainTree.SelectedNode?.Tag as ITreeElement;
+    private IShortcutOrFolder? CurrentItem =>
+        MainTree.SelectedNode?.Tag as IShortcutOrFolder;
 
     private static TreeNode? GetParentFolderTreeNode(TreeNode? node)
     {
@@ -61,7 +61,7 @@ public partial class MainForm : Form
         return GetParentFolderTreeNode(node.Parent);
     }
 
-    private (List<ITreeElement> DataLocation, TreeNodeCollection TreeLocation) GetSelectedFolder()
+    private (List<IShortcutOrFolder> DataLocation, TreeNodeCollection TreeLocation) GetSelectedFolder()
     {
         var parent = GetSelectedFolderTreeNode();
 
@@ -69,14 +69,14 @@ public partial class MainForm : Form
             parent.Tag is ShortcutFolder folder)
             return (folder.Children, parent.Nodes);
 
-        return (Shortcuts.Instance.TreeElements, MainTree.Nodes);
+        return (ShortcutData.Instance.Root, MainTree.Nodes);
     }
 
     private void AddShortcutButton_Click(object sender, EventArgs e)
     {
         var (dataLocation, treeLocation) = GetSelectedFolder();
 
-        var newShortcut = new Shortcut
+        var newShortcut = new ShortcutItem
         {
             Name = NewShortcutText,
         };
@@ -114,7 +114,7 @@ public partial class MainForm : Form
 
         var (dataLocation, treeLocation) = GetSelectedFolder();
 
-        if (selectedNode.Tag is ITreeElement treeElement)
+        if (selectedNode.Tag is IShortcutOrFolder treeElement)
             dataLocation.Remove(treeElement);
 
         treeLocation.Remove(selectedNode);
@@ -125,8 +125,8 @@ public partial class MainForm : Form
 
     private void RefreshSelectedShortcut()
     {
-        var tag = MainTree.SelectedNode?.Tag as ITreeElement;
-        var shortcut = tag as Shortcut;
+        var tag = MainTree.SelectedNode?.Tag as IShortcutOrFolder;
+        var shortcut = tag as ShortcutItem;
 
         var isFolder = tag is ShortcutFolder;
         var isShortcut = shortcut is not null;
@@ -234,7 +234,7 @@ public partial class MainForm : Form
 
     private void SetPathDataOnly(string? path)
     {
-        if (CurrentItem is not Shortcut item)
+        if (CurrentItem is not ShortcutItem item)
             return;
 
         item.TargetPath = path;
@@ -242,7 +242,7 @@ public partial class MainForm : Form
 
     private void SetArgumentsDataOnly(string? arguments)
     {
-        if (CurrentItem is not Shortcut item)
+        if (CurrentItem is not ShortcutItem item)
             return;
 
         item.Arguments = arguments;
@@ -250,14 +250,14 @@ public partial class MainForm : Form
 
     private void SetStartInDataOnly(string? startInPath)
     {
-        if (CurrentItem is not Shortcut item)
+        if (CurrentItem is not ShortcutItem item)
             return;
 
         item.StartInPath = startInPath;
     }
     private void SetToolTipDataOnly(string? toolTip)
     {
-        if (CurrentItem is not Shortcut item)
+        if (CurrentItem is not ShortcutItem item)
             return;
 
         item.ToolTip = toolTip;

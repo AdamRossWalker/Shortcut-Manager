@@ -26,7 +26,7 @@ public sealed class SystemTray : ApplicationContext
         notifyIcon.MouseDown += OnMouseDown;
 
         // If the user hasn't set us up yet, open the full window.
-        if (Shortcuts.Instance.TreeElements.Count == 0)
+        if (ShortcutData.Instance.Root.Count == 0)
             Open();
     }
     private void OnMouseDown(object? sender, MouseEventArgs eventArgs)
