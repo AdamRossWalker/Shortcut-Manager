@@ -1,4 +1,6 @@
-﻿namespace ShortcutManager;
+﻿using ShortcutManager.Data;
+
+namespace ShortcutManager;
 
 /// <summary>
 /// Manages the system tray icon, popup menus, and loading the main window.

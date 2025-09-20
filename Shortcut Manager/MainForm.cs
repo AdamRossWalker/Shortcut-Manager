@@ -1,3 +1,5 @@
+using ShortcutManager.Data;
+
 namespace ShortcutManager;
 
 public partial class MainForm : Form

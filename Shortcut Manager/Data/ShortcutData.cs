@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace ShortcutManager;
+namespace ShortcutManager.Data;
 
 /// <summary>
 /// Holds the collection of shortcuts, and manages saving and loading them.

@@ -1,4 +1,4 @@
-﻿namespace ShortcutManager;
+﻿namespace ShortcutManager.Data;
 
 public sealed class ShortcutFolder : IShortcutOrFolder
 {

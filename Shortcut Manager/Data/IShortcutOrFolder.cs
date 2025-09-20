@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ShortcutManager;
+namespace ShortcutManager.Data;
 
 [JsonDerivedType(typeof(ShortcutItem), typeDiscriminator: "Shortcut")]
 [JsonDerivedType(typeof(ShortcutFolder), typeDiscriminator: "Folder")]
