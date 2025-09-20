@@ -1,21 +1,30 @@
-
-
 namespace ShortcutManager;
 
 public partial class MainForm : Form
 {
+    private const string NewShortcutText = "New Shortcut";
+    private const string NewFolderText = "New Folder";
+
     public MainForm() => InitializeComponent();
 
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
         RefreshTree();
+        RefreshSelectedShortcut();
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        Shortcuts.Instance.Save();
+        base.OnClosed(e);
     }
 
     private void RefreshTree()
     {
         MainTree.Nodes.Clear();
         AddShortcutsToTree(parent: null, Shortcuts.Instance.TreeElements);
+        RefreshSelectedShortcut();
     }
 
     private void AddShortcutsToTree(
@@ -33,7 +42,327 @@ public partial class MainForm : Form
 
             container.Add(node);
         }
-
-        container.Add("New...");
     }
+
+    private TreeNode? GetSelectedFolderTreeNode() =>
+        GetParentFolderTreeNode(MainTree.SelectedNode);
+
+    private ITreeElement? CurrentItem =>
+        MainTree.SelectedNode?.Tag as ITreeElement;
+
+    private static TreeNode? GetParentFolderTreeNode(TreeNode? node)
+    {
+        if (node is null)
+            return null;
+
+        if (node.Tag is ShortcutFolder)
+            return node;
+
+        return GetParentFolderTreeNode(node.Parent);
+    }
+
+    private (List<ITreeElement> DataLocation, TreeNodeCollection TreeLocation) GetSelectedFolder()
+    {
+        var parent = GetSelectedFolderTreeNode();
+
+        if (parent is not null &&
+            parent.Tag is ShortcutFolder folder)
+            return (folder.Children, parent.Nodes);
+
+        return (Shortcuts.Instance.TreeElements, MainTree.Nodes);
+    }
+
+    private void AddShortcutButton_Click(object sender, EventArgs e)
+    {
+        var (dataLocation, treeLocation) = GetSelectedFolder();
+
+        var newShortcut = new Shortcut
+        {
+            Name = NewShortcutText,
+        };
+
+        dataLocation.Add(newShortcut);
+        treeLocation.Add(
+            new TreeNode(newShortcut.Name)
+            {
+                Tag = newShortcut,
+            });
+    }
+
+    private void AddFolderButton_Click(object sender, EventArgs e)
+    {
+        var (dataLocation, treeLocation) = GetSelectedFolder();
+
+        var newShortcutFolder = new ShortcutFolder
+        {
+            Name = NewFolderText,
+        };
+
+        dataLocation.Add(newShortcutFolder);
+        treeLocation.Add(
+            new TreeNode(newShortcutFolder.Name)
+            {
+                Tag = newShortcutFolder,
+            });
+    }
+
+    private void DeleteButton_Click(object sender, EventArgs e)
+    {
+        var selectedNode = MainTree.SelectedNode;
+        if (selectedNode is null)
+            return;
+
+        var (dataLocation, treeLocation) = GetSelectedFolder();
+
+        if (selectedNode.Tag is ITreeElement treeElement)
+            dataLocation.Remove(treeElement);
+
+        treeLocation.Remove(selectedNode);
+    }
+
+    private void MainTree_AfterSelect(object sender, TreeViewEventArgs e) =>
+        RefreshSelectedShortcut();
+
+    private void RefreshSelectedShortcut()
+    {
+        var tag = MainTree.SelectedNode?.Tag as ITreeElement;
+        var shortcut = tag as Shortcut;
+
+        var isFolder = tag is ShortcutFolder;
+        var isShortcut = shortcut is not null;
+        var isEither = isFolder | isShortcut;
+
+        MainTableLayoutPanel.SuspendLayout();
+        try
+        {
+            IconLabel.Visible = isEither;
+            IconPictureBox.Visible = isEither;
+            IconBrowseButton.Visible = isEither;
+
+            ShortcutNameLabel.Visible = isEither;
+            ShortcutNameTextBox.Visible = isEither;
+
+            PathLabel.Visible = isShortcut;
+            PathTextBox.Visible = isShortcut;
+            PathBrowseButton.Visible = isShortcut;
+
+            ArgumentsLabel.Visible = isShortcut;
+            ArgumentsTextBox.Visible = isShortcut;
+
+            StartInLabel.Visible = isShortcut;
+            StartInTextBox.Visible = isShortcut;
+            StartInBrowseButton.Visible = isShortcut;
+
+            ToolTipLabel.Visible = isEither;
+            ToolTipTextBox.Visible = isEither;
+
+            DeleteButton.Visible = isEither;
+            MainTreeContextMenuAddDeleteButton.Visible = isEither;
+
+            if (tag is not null)
+            {
+                IconPictureBox.Image = tag.Icon?.ToBitmap();
+                ShortcutNameTextBox.Text = tag.Name;
+            }
+
+            if (shortcut is not null)
+            {
+                PathTextBox.Text = shortcut.TargetPath;
+                ArgumentsTextBox.Text = shortcut.Arguments;
+                StartInTextBox.Text = shortcut.StartInPath;
+                ToolTipTextBox.Text = shortcut.ToolTip;
+            }
+        }
+        finally
+        {
+            MainTableLayoutPanel.ResumeLayout();
+        }
+    }
+
+    private void SetName(string? name)
+    {
+        SetNameDataOnly(name);
+        SetNameUiOnly(name);
+    }
+
+    private void SetIcon(Icon? icon)
+    {
+        SetIconDataOnly(icon);
+        SetIconUiOnly(icon);
+    }
+
+    private void SetPath(string? path)
+    {
+        SetPathDataOnly(path);
+        SetPathUiOnly(path);
+    }
+
+    private void SetArguments(string? arguments)
+    {
+        SetArgumentsDataOnly(arguments);
+        SetArgumentsUiOnly(arguments);
+    }
+
+    private void SetStartIn(string? startInPath)
+    {
+        SetStartInDataOnly(startInPath);
+        SetStartInUiOnly(startInPath);
+    }
+    private void SetToolTip(string? toolTip)
+    {
+        SetToolTipDataOnly(toolTip);
+        SetToolTipUiOnly(toolTip);
+    }
+
+    private void SetNameDataOnly(string? name)
+    {
+        var item = CurrentItem;
+        if (item is null)
+            return;
+
+        item.Name = name;
+    }
+
+    private void SetIconDataOnly(Icon? icon)
+    {
+        var item = CurrentItem;
+        if (item is null)
+            return;
+
+        item.Icon = icon;
+    }
+
+    private void SetPathDataOnly(string? path)
+    {
+        if (CurrentItem is not Shortcut item)
+            return;
+
+        item.TargetPath = path;
+    }
+
+    private void SetArgumentsDataOnly(string? arguments)
+    {
+        if (CurrentItem is not Shortcut item)
+            return;
+
+        item.Arguments = arguments;
+    }
+
+    private void SetStartInDataOnly(string? startInPath)
+    {
+        if (CurrentItem is not Shortcut item)
+            return;
+
+        item.StartInPath = startInPath;
+    }
+    private void SetToolTipDataOnly(string? toolTip)
+    {
+        if (CurrentItem is not Shortcut item)
+            return;
+
+        item.ToolTip = toolTip;
+    }
+
+    private void SetNameUiOnly(string? name) =>
+        ShortcutNameTextBox.Text = name;
+
+    private void SetIconUiOnly(Icon? icon) =>
+        IconPictureBox.Image = icon?.ToBitmap();
+
+    private void SetPathUiOnly(string? path) =>
+        PathTextBox.Text = path;
+
+    private void SetArgumentsUiOnly(string? arguments) =>
+        ArgumentsTextBox.Text = arguments;
+
+    private void SetStartInUiOnly(string? startInPath) =>
+        StartInTextBox.Text = startInPath;
+
+    private void SetToolTipUiOnly(string? toolTip) =>
+        ToolTipTextBox.Text = toolTip;
+
+    private void IconBrowseButton_Click(object sender, EventArgs e)
+    {
+        BrowseFileDialog.Filter = "Icons (*.ico)|Executable File (*.exe;*.com;*.cmd;*.bat)|All Files (*.*)";
+        BrowseFileDialog.FilterIndex = 0;
+
+        if (BrowseFileDialog.ShowDialog() != DialogResult.OK)
+            return;
+
+        SetIcon(BrowseFileDialog.FileName);
+    }
+
+    private void SetIcon(string filename)
+    {
+        Icon? newIcon;
+
+        var extension = Path.GetExtension(filename).ToUpper();
+        if (extension == "EXE" ||
+            extension == "COM" ||
+            extension == "CMD")
+        {
+            newIcon = Icon.ExtractAssociatedIcon(filename);
+        }
+        else if (extension == "ICO")
+        {
+            newIcon = new Icon(filename);
+        }
+        else
+        {
+            newIcon = null;
+        }
+
+        SetIcon(newIcon);
+    }
+
+    private void PathBrowseButton_Click(object sender, EventArgs e)
+    {
+        BrowseFileDialog.Filter = "Executable File (*.exe;*.com;*.cmd;*.bat)|All Files (*.*)";
+        BrowseFileDialog.FilterIndex = 0;
+
+        BrowseFileDialog.DefaultExt = "Executable File (*.exe;*.com;*.cmd;*.bat)";
+
+        if (BrowseFileDialog.ShowDialog() != DialogResult.OK)
+            return;
+
+        var filename = BrowseFileDialog.FileName;
+
+        SetPath(filename);
+
+        if (String.IsNullOrWhiteSpace(ShortcutNameTextBox.Text) ||
+            ShortcutNameTextBox.Text == NewShortcutText ||
+            ShortcutNameTextBox.Text == NewFolderText)
+        {
+            SetName(Path.GetFileNameWithoutExtension(filename));
+        }
+
+        if (String.IsNullOrWhiteSpace(StartInTextBox.Text))
+            SetStartIn(Path.GetDirectoryName(filename));
+
+        if (IconPictureBox.Image is null)
+            SetIcon(filename);
+    }
+
+    private void StartInBrowseButton_Click(object sender, EventArgs e)
+    {
+        if (BrowseFolderDialog.ShowDialog() != DialogResult.OK)
+            return;
+
+        SetStartIn(BrowseFolderDialog.SelectedPath);
+    }
+
+    private void ShortcutNameTextBox_TextChanged(object sender, EventArgs e) =>
+        SetNameDataOnly(ShortcutNameTextBox.Text);
+
+    private void PathTextBox_TextChanged(object sender, EventArgs e) => 
+        SetPathDataOnly(PathTextBox.Text);
+
+    private void ArgumentsTextBox_TextChanged(object sender, EventArgs e) => 
+        SetArgumentsDataOnly(ArgumentsTextBox.Text);
+
+    private void StartInTextBox_TextChanged(object sender, EventArgs e) => 
+        SetStartInDataOnly(StartInTextBox.Text);
+
+    private void ToolTipTextBox_TextChanged(object sender, EventArgs e) => 
+        SetToolTipDataOnly(ToolTipTextBox.Text);
 }

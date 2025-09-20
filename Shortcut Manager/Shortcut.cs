@@ -10,5 +10,7 @@ public sealed class Shortcut : ITreeElement
 
     public string? StartInPath { get; set; }
 
+    public string? ToolTip { get; set; }
+
     public Icon? Icon { get; set; }
 }

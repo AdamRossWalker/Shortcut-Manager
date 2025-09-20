@@ -31,7 +31,11 @@
             components = new System.ComponentModel.Container();
             var resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             MainTree = new TreeView();
-            tableLayoutPanel1 = new TableLayoutPanel();
+            MainTreeeMenuStrip = new ContextMenuStrip(components);
+            MainTreeContextMenuAddShortcutButton = new ToolStripMenuItem();
+            MainTreeContextMenuAddFolderButton = new ToolStripMenuItem();
+            MainTreeContextMenuAddDeleteButton = new ToolStripMenuItem();
+            MainTableLayoutPanel = new TableLayoutPanel();
             MainToolStrip = new ToolStrip();
             AddShortcutButton = new ToolStripButton();
             AddFolderButton = new ToolStripButton();
@@ -44,16 +48,19 @@
             PathTextBox = new TextBox();
             ToolTipTextBox = new TextBox();
             ArgumentsTextBox = new TextBox();
-            BrowseIconButton = new Button();
-            BrowsePathButton = new Button();
-            MainTreeeMenuStrip = new ContextMenuStrip(components);
-            MainTreeContextMenuAddShortcutButton = new ToolStripMenuItem();
-            MainTreeContextMenuAddFolderButton = new ToolStripMenuItem();
-            MainTreeContextMenuAddDeleteButton = new ToolStripMenuItem();
-            tableLayoutPanel1.SuspendLayout();
+            IconBrowseButton = new Button();
+            PathBrowseButton = new Button();
+            ShortcutNameLabel = new Label();
+            ShortcutNameTextBox = new TextBox();
+            StartInLabel = new Label();
+            StartInTextBox = new TextBox();
+            StartInBrowseButton = new Button();
+            BrowseFileDialog = new OpenFileDialog();
+            BrowseFolderDialog = new FolderBrowserDialog();
+            MainTreeeMenuStrip.SuspendLayout();
+            MainTableLayoutPanel.SuspendLayout();
             MainToolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)IconPictureBox).BeginInit();
-            MainTreeeMenuStrip.SuspendLayout();
             SuspendLayout();
             // 
             // MainTree
@@ -62,45 +69,81 @@
             MainTree.Dock = DockStyle.Fill;
             MainTree.Location = new Point(3, 37);
             MainTree.Name = "MainTree";
-            tableLayoutPanel1.SetRowSpan(MainTree, 5);
+            MainTableLayoutPanel.SetRowSpan(MainTree, 7);
             MainTree.Size = new Size(319, 410);
             MainTree.TabIndex = 0;
+            MainTree.AfterSelect += MainTree_AfterSelect;
             // 
-            // tableLayoutPanel1
+            // MainTreeeMenuStrip
             // 
-            tableLayoutPanel1.ColumnCount = 4;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 49.9999924F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0000038F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel1.Controls.Add(MainTree, 0, 1);
-            tableLayoutPanel1.Controls.Add(MainToolStrip, 0, 0);
-            tableLayoutPanel1.Controls.Add(IconLabel, 1, 1);
-            tableLayoutPanel1.Controls.Add(PathLabel, 1, 2);
-            tableLayoutPanel1.Controls.Add(ArgumentsLabel, 1, 3);
-            tableLayoutPanel1.Controls.Add(ToolTipLabel, 1, 4);
-            tableLayoutPanel1.Controls.Add(IconPictureBox, 2, 1);
-            tableLayoutPanel1.Controls.Add(PathTextBox, 2, 2);
-            tableLayoutPanel1.Controls.Add(ToolTipTextBox, 2, 4);
-            tableLayoutPanel1.Controls.Add(ArgumentsTextBox, 2, 3);
-            tableLayoutPanel1.Controls.Add(BrowseIconButton, 3, 1);
-            tableLayoutPanel1.Controls.Add(BrowsePathButton, 3, 2);
-            tableLayoutPanel1.Dock = DockStyle.Fill;
-            tableLayoutPanel1.Location = new Point(0, 0);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 6;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(800, 450);
-            tableLayoutPanel1.TabIndex = 1;
+            MainTreeeMenuStrip.ImageScalingSize = new Size(24, 24);
+            MainTreeeMenuStrip.Items.AddRange(new ToolStripItem[] { MainTreeContextMenuAddShortcutButton, MainTreeContextMenuAddFolderButton, MainTreeContextMenuAddDeleteButton });
+            MainTreeeMenuStrip.Name = "MainTreeeMenuStrip";
+            MainTreeeMenuStrip.Size = new Size(191, 100);
+            // 
+            // MainTreeContextMenuAddShortcutButton
+            // 
+            MainTreeContextMenuAddShortcutButton.Name = "MainTreeContextMenuAddShortcutButton";
+            MainTreeContextMenuAddShortcutButton.Size = new Size(190, 32);
+            MainTreeContextMenuAddShortcutButton.Text = "Add Shortcut";
+            MainTreeContextMenuAddShortcutButton.Click += AddShortcutButton_Click;
+            // 
+            // MainTreeContextMenuAddFolderButton
+            // 
+            MainTreeContextMenuAddFolderButton.Name = "MainTreeContextMenuAddFolderButton";
+            MainTreeContextMenuAddFolderButton.Size = new Size(190, 32);
+            MainTreeContextMenuAddFolderButton.Text = "Add Folder";
+            MainTreeContextMenuAddFolderButton.Click += AddFolderButton_Click;
+            // 
+            // MainTreeContextMenuAddDeleteButton
+            // 
+            MainTreeContextMenuAddDeleteButton.Name = "MainTreeContextMenuAddDeleteButton";
+            MainTreeContextMenuAddDeleteButton.Size = new Size(190, 32);
+            MainTreeContextMenuAddDeleteButton.Text = "Delete";
+            MainTreeContextMenuAddDeleteButton.Click += DeleteButton_Click;
+            // 
+            // MainTableLayoutPanel
+            // 
+            MainTableLayoutPanel.ColumnCount = 4;
+            MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 49.99999F));
+            MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle());
+            MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0000076F));
+            MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle());
+            MainTableLayoutPanel.Controls.Add(MainTree, 0, 1);
+            MainTableLayoutPanel.Controls.Add(MainToolStrip, 0, 0);
+            MainTableLayoutPanel.Controls.Add(IconLabel, 1, 1);
+            MainTableLayoutPanel.Controls.Add(PathLabel, 1, 3);
+            MainTableLayoutPanel.Controls.Add(ArgumentsLabel, 1, 4);
+            MainTableLayoutPanel.Controls.Add(ToolTipLabel, 1, 6);
+            MainTableLayoutPanel.Controls.Add(IconPictureBox, 2, 1);
+            MainTableLayoutPanel.Controls.Add(PathTextBox, 2, 3);
+            MainTableLayoutPanel.Controls.Add(ToolTipTextBox, 2, 6);
+            MainTableLayoutPanel.Controls.Add(ArgumentsTextBox, 2, 4);
+            MainTableLayoutPanel.Controls.Add(IconBrowseButton, 3, 1);
+            MainTableLayoutPanel.Controls.Add(PathBrowseButton, 3, 3);
+            MainTableLayoutPanel.Controls.Add(ShortcutNameLabel, 1, 2);
+            MainTableLayoutPanel.Controls.Add(ShortcutNameTextBox, 2, 2);
+            MainTableLayoutPanel.Controls.Add(StartInLabel, 1, 5);
+            MainTableLayoutPanel.Controls.Add(StartInTextBox, 2, 5);
+            MainTableLayoutPanel.Controls.Add(StartInBrowseButton, 3, 5);
+            MainTableLayoutPanel.Dock = DockStyle.Fill;
+            MainTableLayoutPanel.Location = new Point(0, 0);
+            MainTableLayoutPanel.Name = "MainTableLayoutPanel";
+            MainTableLayoutPanel.RowCount = 8;
+            MainTableLayoutPanel.RowStyles.Add(new RowStyle());
+            MainTableLayoutPanel.RowStyles.Add(new RowStyle());
+            MainTableLayoutPanel.RowStyles.Add(new RowStyle());
+            MainTableLayoutPanel.RowStyles.Add(new RowStyle());
+            MainTableLayoutPanel.RowStyles.Add(new RowStyle());
+            MainTableLayoutPanel.RowStyles.Add(new RowStyle());
+            MainTableLayoutPanel.RowStyles.Add(new RowStyle());
+            MainTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            MainTableLayoutPanel.Size = new Size(800, 450);
+            MainTableLayoutPanel.TabIndex = 1;
             // 
             // MainToolStrip
             // 
-            tableLayoutPanel1.SetColumnSpan(MainToolStrip, 4);
+            MainTableLayoutPanel.SetColumnSpan(MainToolStrip, 4);
             MainToolStrip.ImageScalingSize = new Size(24, 24);
             MainToolStrip.Items.AddRange(new ToolStripItem[] { AddShortcutButton, AddFolderButton, DeleteButton });
             MainToolStrip.Location = new Point(0, 0);
@@ -116,6 +159,7 @@
             AddShortcutButton.Name = "AddShortcutButton";
             AddShortcutButton.Size = new Size(146, 29);
             AddShortcutButton.Text = "Add Shortcut";
+            AddShortcutButton.Click += AddShortcutButton_Click;
             // 
             // AddFolderButton
             // 
@@ -124,6 +168,7 @@
             AddFolderButton.Name = "AddFolderButton";
             AddFolderButton.Size = new Size(129, 29);
             AddFolderButton.Text = "Add Folder";
+            AddFolderButton.Click += AddFolderButton_Click;
             // 
             // DeleteButton
             // 
@@ -132,6 +177,7 @@
             DeleteButton.Name = "DeleteButton";
             DeleteButton.Size = new Size(90, 29);
             DeleteButton.Text = "Delete";
+            DeleteButton.Click += DeleteButton_Click;
             // 
             // IconLabel
             // 
@@ -148,7 +194,7 @@
             // 
             PathLabel.AutoSize = true;
             PathLabel.Dock = DockStyle.Fill;
-            PathLabel.Location = new Point(328, 152);
+            PathLabel.Location = new Point(328, 189);
             PathLabel.Name = "PathLabel";
             PathLabel.Size = new Size(100, 42);
             PathLabel.TabIndex = 3;
@@ -159,7 +205,7 @@
             // 
             ArgumentsLabel.AutoSize = true;
             ArgumentsLabel.Dock = DockStyle.Fill;
-            ArgumentsLabel.Location = new Point(328, 194);
+            ArgumentsLabel.Location = new Point(328, 231);
             ArgumentsLabel.Name = "ArgumentsLabel";
             ArgumentsLabel.Size = new Size(100, 37);
             ArgumentsLabel.TabIndex = 4;
@@ -170,7 +216,7 @@
             // 
             ToolTipLabel.AutoSize = true;
             ToolTipLabel.Dock = DockStyle.Fill;
-            ToolTipLabel.Location = new Point(328, 231);
+            ToolTipLabel.Location = new Point(328, 310);
             ToolTipLabel.Name = "ToolTipLabel";
             ToolTipLabel.Size = new Size(100, 37);
             ToolTipLabel.TabIndex = 5;
@@ -189,94 +235,137 @@
             // PathTextBox
             // 
             PathTextBox.Dock = DockStyle.Fill;
-            PathTextBox.Location = new Point(434, 155);
+            PathTextBox.Location = new Point(434, 192);
+            PathTextBox.MaxLength = 255;
             PathTextBox.Name = "PathTextBox";
             PathTextBox.Size = new Size(320, 31);
             PathTextBox.TabIndex = 7;
+            PathTextBox.TextChanged += PathTextBox_TextChanged;
             // 
             // ToolTipTextBox
             // 
             ToolTipTextBox.Dock = DockStyle.Fill;
-            ToolTipTextBox.Location = new Point(434, 234);
+            ToolTipTextBox.Location = new Point(434, 313);
+            ToolTipTextBox.MaxLength = 255;
             ToolTipTextBox.Name = "ToolTipTextBox";
             ToolTipTextBox.Size = new Size(320, 31);
             ToolTipTextBox.TabIndex = 8;
+            ToolTipTextBox.TextChanged += ToolTipTextBox_TextChanged;
             // 
             // ArgumentsTextBox
             // 
             ArgumentsTextBox.Dock = DockStyle.Fill;
-            ArgumentsTextBox.Location = new Point(434, 197);
+            ArgumentsTextBox.Location = new Point(434, 234);
+            ArgumentsTextBox.MaxLength = 255;
             ArgumentsTextBox.Name = "ArgumentsTextBox";
             ArgumentsTextBox.Size = new Size(320, 31);
             ArgumentsTextBox.TabIndex = 9;
+            ArgumentsTextBox.TextChanged += ArgumentsTextBox_TextChanged;
             // 
-            // BrowseIconButton
+            // IconBrowseButton
             // 
-            BrowseIconButton.Anchor = AnchorStyles.Left;
-            BrowseIconButton.Location = new Point(760, 75);
-            BrowseIconButton.Name = "BrowseIconButton";
-            BrowseIconButton.Size = new Size(36, 36);
-            BrowseIconButton.TabIndex = 10;
-            BrowseIconButton.Text = "...";
-            BrowseIconButton.UseVisualStyleBackColor = true;
+            IconBrowseButton.Anchor = AnchorStyles.Left;
+            IconBrowseButton.Location = new Point(760, 75);
+            IconBrowseButton.Name = "IconBrowseButton";
+            IconBrowseButton.Size = new Size(36, 36);
+            IconBrowseButton.TabIndex = 10;
+            IconBrowseButton.Text = "...";
+            IconBrowseButton.UseVisualStyleBackColor = true;
+            IconBrowseButton.Click += IconBrowseButton_Click;
             // 
-            // BrowsePathButton
+            // PathBrowseButton
             // 
-            BrowsePathButton.Anchor = AnchorStyles.Left;
-            BrowsePathButton.AutoSize = true;
-            BrowsePathButton.Location = new Point(760, 155);
-            BrowsePathButton.Name = "BrowsePathButton";
-            BrowsePathButton.Size = new Size(36, 36);
-            BrowsePathButton.TabIndex = 11;
-            BrowsePathButton.Text = "...";
-            BrowsePathButton.UseVisualStyleBackColor = true;
+            PathBrowseButton.Anchor = AnchorStyles.Left;
+            PathBrowseButton.AutoSize = true;
+            PathBrowseButton.Location = new Point(760, 192);
+            PathBrowseButton.Name = "PathBrowseButton";
+            PathBrowseButton.Size = new Size(36, 36);
+            PathBrowseButton.TabIndex = 11;
+            PathBrowseButton.Text = "...";
+            PathBrowseButton.UseVisualStyleBackColor = true;
+            PathBrowseButton.Click += PathBrowseButton_Click;
             // 
-            // MainTreeeMenuStrip
+            // ShortcutNameLabel
             // 
-            MainTreeeMenuStrip.ImageScalingSize = new Size(24, 24);
-            MainTreeeMenuStrip.Items.AddRange(new ToolStripItem[] { MainTreeContextMenuAddShortcutButton, MainTreeContextMenuAddFolderButton, MainTreeContextMenuAddDeleteButton });
-            MainTreeeMenuStrip.Name = "MainTreeeMenuStrip";
-            MainTreeeMenuStrip.Size = new Size(241, 133);
+            ShortcutNameLabel.AutoSize = true;
+            ShortcutNameLabel.Dock = DockStyle.Fill;
+            ShortcutNameLabel.Location = new Point(328, 152);
+            ShortcutNameLabel.Name = "ShortcutNameLabel";
+            ShortcutNameLabel.Size = new Size(100, 37);
+            ShortcutNameLabel.TabIndex = 12;
+            ShortcutNameLabel.Text = "Name";
+            ShortcutNameLabel.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // MainTreeContextMenuAddShortcutButton
+            // ShortcutNameTextBox
             // 
-            MainTreeContextMenuAddShortcutButton.Name = "MainTreeContextMenuAddShortcutButton";
-            MainTreeContextMenuAddShortcutButton.Size = new Size(240, 32);
-            MainTreeContextMenuAddShortcutButton.Text = "Add Shortcut";
+            ShortcutNameTextBox.Dock = DockStyle.Fill;
+            ShortcutNameTextBox.Location = new Point(434, 155);
+            ShortcutNameTextBox.MaxLength = 255;
+            ShortcutNameTextBox.Name = "ShortcutNameTextBox";
+            ShortcutNameTextBox.Size = new Size(320, 31);
+            ShortcutNameTextBox.TabIndex = 13;
+            ShortcutNameTextBox.TextChanged += ShortcutNameTextBox_TextChanged;
             // 
-            // MainTreeContextMenuAddFolderButton
+            // StartInLabel
             // 
-            MainTreeContextMenuAddFolderButton.Name = "MainTreeContextMenuAddFolderButton";
-            MainTreeContextMenuAddFolderButton.Size = new Size(240, 32);
-            MainTreeContextMenuAddFolderButton.Text = "Add Folder";
+            StartInLabel.AutoSize = true;
+            StartInLabel.Dock = DockStyle.Fill;
+            StartInLabel.Location = new Point(328, 268);
+            StartInLabel.Name = "StartInLabel";
+            StartInLabel.Size = new Size(100, 42);
+            StartInLabel.TabIndex = 14;
+            StartInLabel.Text = "Start In";
+            StartInLabel.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // MainTreeContextMenuAddDeleteButton
+            // StartInTextBox
             // 
-            MainTreeContextMenuAddDeleteButton.Name = "MainTreeContextMenuAddDeleteButton";
-            MainTreeContextMenuAddDeleteButton.Size = new Size(240, 32);
-            MainTreeContextMenuAddDeleteButton.Text = "Delete";
+            StartInTextBox.Dock = DockStyle.Fill;
+            StartInTextBox.Location = new Point(434, 271);
+            StartInTextBox.MaxLength = 255;
+            StartInTextBox.Name = "StartInTextBox";
+            StartInTextBox.Size = new Size(320, 31);
+            StartInTextBox.TabIndex = 15;
+            StartInTextBox.TextChanged += StartInTextBox_TextChanged;
+            // 
+            // StartInBrowseButton
+            // 
+            StartInBrowseButton.Anchor = AnchorStyles.Left;
+            StartInBrowseButton.Location = new Point(760, 271);
+            StartInBrowseButton.Name = "StartInBrowseButton";
+            StartInBrowseButton.Size = new Size(36, 36);
+            StartInBrowseButton.TabIndex = 16;
+            StartInBrowseButton.Text = "...";
+            StartInBrowseButton.UseVisualStyleBackColor = true;
+            StartInBrowseButton.Click += StartInBrowseButton_Click;
+            // 
+            // BrowseFileDialog
+            // 
+            BrowseFileDialog.DefaultExt = "exe";
+            BrowseFileDialog.FileName = "*.exe";
+            BrowseFileDialog.RestoreDirectory = true;
+            BrowseFileDialog.Title = "Browse...";
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(tableLayoutPanel1);
+            Controls.Add(MainTableLayoutPanel);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "MainForm";
             Text = "Shortcut Manager";
-            tableLayoutPanel1.ResumeLayout(false);
-            tableLayoutPanel1.PerformLayout();
+            MainTreeeMenuStrip.ResumeLayout(false);
+            MainTableLayoutPanel.ResumeLayout(false);
+            MainTableLayoutPanel.PerformLayout();
             MainToolStrip.ResumeLayout(false);
             MainToolStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)IconPictureBox).EndInit();
-            MainTreeeMenuStrip.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
         private TreeView MainTree;
-        private TableLayoutPanel tableLayoutPanel1;
+        private TableLayoutPanel MainTableLayoutPanel;
         private ToolStrip MainToolStrip;
         private ToolStripButton AddShortcutButton;
         private ToolStripButton AddFolderButton;
@@ -289,11 +378,18 @@
         private TextBox PathTextBox;
         private TextBox ToolTipTextBox;
         private TextBox ArgumentsTextBox;
-        private Button BrowseIconButton;
-        private Button BrowsePathButton;
+        private Button IconBrowseButton;
+        private Button PathBrowseButton;
         private ContextMenuStrip MainTreeeMenuStrip;
         private ToolStripMenuItem MainTreeContextMenuAddShortcutButton;
         private ToolStripMenuItem MainTreeContextMenuAddFolderButton;
         private ToolStripMenuItem MainTreeContextMenuAddDeleteButton;
+        private Label ShortcutNameLabel;
+        private TextBox ShortcutNameTextBox;
+        private OpenFileDialog BrowseFileDialog;
+        private Label StartInLabel;
+        private TextBox StartInTextBox;
+        private Button StartInBrowseButton;
+        private FolderBrowserDialog BrowseFolderDialog;
     }
 }
