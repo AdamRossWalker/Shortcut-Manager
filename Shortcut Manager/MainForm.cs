@@ -141,8 +141,12 @@ public partial class MainForm : Form
                 continue;
             }
 
-            // Give up, the tree has changed too much.
-            break;
+            // Fallback to the same index
+            {
+                currentNode = currentNodeCollection[location.Index];
+                currentNodeCollection = currentNode.Nodes;
+                continue;
+            }
         }
 
         MainTree.SelectedNode = currentNode;
