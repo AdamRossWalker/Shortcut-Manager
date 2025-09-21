@@ -79,53 +79,54 @@ public sealed class ShortcutData
         IEnumerable<(int Index, string Name)> location,
         IShortcutOrFolder newItem)
     =>
-        Root =
-            (ShortcutFolder)MutateTree(
-                Root,
-                location,
-                parent =>
-                {
-                    if (parent is ShortcutFolder parentFolder)
-                    {
-                        return new ShortcutFolder
-                        {
-                            Name = parentFolder.Name,
-                            Icon = parentFolder.Icon,
-                            Children = [.. parentFolder.Children, newItem],
-                        };
-                    }
-
+        CreateNewTree(
+            location,
+            parent =>
+            {
+                if (parent is not ShortcutFolder parentFolder)
                     return parent;
-                })!;
+
+                return new ShortcutFolder
+                {
+                    Name = parentFolder.Name,
+                    Icon = parentFolder.Icon,
+                    Children = [.. parentFolder.Children, newItem],
+                };
+            });
 
     public void ReplaceItem(
         IEnumerable<(int Index, string Name)> location,
         IShortcutOrFolder newItem)
     =>
-        Root =
-            (ShortcutFolder)MutateTree(
-                Root,
-                location,
-                oldItem => newItem)!;
+        CreateNewTree(
+            location,
+            oldItem => newItem);
 
     public void DeleteItem(
         IEnumerable<(int Index, string Name)> location)
     =>
-        Root =
-            (ShortcutFolder)MutateTree(
-                Root,
-                location,
-                oldItem => null)!;
+        CreateNewTree(
+            location,
+            oldItem => null);
 
-    private static IShortcutOrFolder? MutateTree(
+    private void CreateNewTree(
+        IEnumerable<(int Index, string Name)> location,
+        Func<IShortcutOrFolder, IShortcutOrFolder?> createNewItemFrom) 
+    =>
+        Root = (ShortcutFolder)CreateSubTree(
+            Root,
+            location,
+            createNewItemFrom)!;
+
+    private static IShortcutOrFolder? CreateSubTree(
         IShortcutOrFolder oldItem,
         IEnumerable<(int Index, string Name)> location,
-        Func<IShortcutOrFolder, IShortcutOrFolder?> mutation)
+        Func<IShortcutOrFolder, IShortcutOrFolder?> createNewItemFrom)
     {
         // If we are at the target leaf node, just make the change.
         if (!location.Any())
         {
-            return mutation(oldItem);
+            return createNewItemFrom(oldItem);
         }
 
         // Otherwise, we should be on a folder.
@@ -157,10 +158,10 @@ public sealed class ShortcutData
         newChildren.AddRange(oldFolder.Children.Take(oldChildLocation.Index));
 
         var newChildItem = 
-            MutateTree(
+            CreateSubTree(
                 oldChildItem,
                 location.Skip(1),
-                mutation);
+                createNewItemFrom);
 
         if (newChildItem is not null)
             newChildren.Add(newChildItem);

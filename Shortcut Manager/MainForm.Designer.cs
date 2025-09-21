@@ -240,7 +240,6 @@
             PathTextBox.Name = "PathTextBox";
             PathTextBox.Size = new Size(320, 31);
             PathTextBox.TabIndex = 7;
-            PathTextBox.TextChanged += PathTextBox_TextChanged;
             // 
             // ToolTipTextBox
             // 
@@ -250,7 +249,6 @@
             ToolTipTextBox.Name = "ToolTipTextBox";
             ToolTipTextBox.Size = new Size(320, 31);
             ToolTipTextBox.TabIndex = 8;
-            ToolTipTextBox.TextChanged += ToolTipTextBox_TextChanged;
             // 
             // ArgumentsTextBox
             // 
@@ -260,7 +258,6 @@
             ArgumentsTextBox.Name = "ArgumentsTextBox";
             ArgumentsTextBox.Size = new Size(320, 31);
             ArgumentsTextBox.TabIndex = 9;
-            ArgumentsTextBox.TextChanged += ArgumentsTextBox_TextChanged;
             // 
             // IconBrowseButton
             // 
@@ -304,7 +301,6 @@
             ShortcutNameTextBox.Name = "ShortcutNameTextBox";
             ShortcutNameTextBox.Size = new Size(320, 31);
             ShortcutNameTextBox.TabIndex = 13;
-            ShortcutNameTextBox.TextChanged += ShortcutNameTextBox_TextChanged;
             // 
             // StartInLabel
             // 
@@ -325,7 +321,6 @@
             StartInTextBox.Name = "StartInTextBox";
             StartInTextBox.Size = new Size(320, 31);
             StartInTextBox.TabIndex = 15;
-            StartInTextBox.TextChanged += StartInTextBox_TextChanged;
             // 
             // StartInBrowseButton
             // 
