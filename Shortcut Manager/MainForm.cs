@@ -4,9 +4,6 @@ namespace ShortcutManager;
 
 public partial class MainForm : Form
 {
-    private const string NewShortcutText = "New Shortcut";
-    private const string NewFolderText = "New Folder";
-
     private readonly ViewModel viewModel = new();
 
     public MainForm()
@@ -56,7 +53,7 @@ public partial class MainForm : Form
         if (isTreeRefreshing)
             return;
         
-        var selectedLocation = SelectedNodeLocation();
+        var selectedLocation = SelectedLocation();
 
         isTreeRefreshing = true;
         try
@@ -98,15 +95,15 @@ public partial class MainForm : Form
         }
     }
 
-    private IEnumerable<(int Index, string Name)> SelectedNodeLocation() =>
-        NodeLocation(MainTree.SelectedNode);
+    private IEnumerable<(int Index, string Name)> SelectedLocation() =>
+        LocationOf(MainTree.SelectedNode);
 
-    private static IEnumerable<(int Index, string Name)> NodeLocation(TreeNode? node)
+    private static IEnumerable<(int Index, string Name)> LocationOf(TreeNode? node)
     {
         if (node is null)
             yield break;
 
-        foreach (var parentNodes in NodeLocation(node.Parent))
+        foreach (var parentNodes in LocationOf(node.Parent))
             yield return parentNodes;
 
         yield return (node.Index, node.Text);
@@ -151,16 +148,13 @@ public partial class MainForm : Form
         MainTree.SelectedNode = currentNode;
     }
 
-    private IShortcutOrFolder? CurrentItem =>
-        ShortcutData.Instance.GetItem(SelectedNodeLocation());
-
     private void AddShortcutButton_Click(object sender, EventArgs e)
     {
         ShortcutData.Instance.AddItem(
-            SelectedNodeLocation(),
+            SelectedLocation(),
             new ShortcutItem
             {
-                Name = NewShortcutText,
+                Name = ShortcutData.NewShortcutText,
                 Icon = null,
                 TargetPath = null,
                 Arguments = null,
@@ -174,10 +168,10 @@ public partial class MainForm : Form
     private void AddFolderButton_Click(object sender, EventArgs e)
     {
         ShortcutData.Instance.AddItem(
-            SelectedNodeLocation(),
+            SelectedLocation(),
             new ShortcutFolder
             {
-                Name = NewFolderText,
+                Name = ShortcutData.NewFolderText,
                 Icon = null,
                 Children = [],
             });
@@ -188,7 +182,7 @@ public partial class MainForm : Form
     private void DeleteButton_Click(object sender, EventArgs e)
     {
         ShortcutData.Instance.DeleteItem(
-            SelectedNodeLocation());
+            SelectedLocation());
         
         RefreshTree();
     }
@@ -201,7 +195,8 @@ public partial class MainForm : Form
         if (isTreeRefreshing)
             return;
 
-        var item = CurrentItem;
+        var location = SelectedLocation();
+        var item = ShortcutData.Instance.GetItem(location);
         var shortcut = item as ShortcutItem;
         
         var isFolder = item is ShortcutFolder;
@@ -235,8 +230,7 @@ public partial class MainForm : Form
             DeleteButton.Visible = isEither;
             MainTreeContextMenuAddDeleteButton.Visible = isEither;
 
-            viewModel.SelectedNodeLocation = SelectedNodeLocation();
-            viewModel.CurrentItem = item;
+            viewModel.SetCurrentItem(location, item);
         }
         finally
         {
@@ -252,30 +246,7 @@ public partial class MainForm : Form
         if (BrowseFileDialog.ShowDialog() != DialogResult.OK)
             return;
 
-        SetIcon(BrowseFileDialog.FileName);
-    }
-
-    private void SetIcon(string filename)
-    {
-        Icon? newIcon;
-
-        var extension = Path.GetExtension(filename).ToUpper();
-        if (extension == "EXE" ||
-            extension == "COM" ||
-            extension == "CMD")
-        {
-            newIcon = Icon.ExtractAssociatedIcon(filename);
-        }
-        else if (extension == "ICO")
-        {
-            newIcon = new Icon(filename);
-        }
-        else
-        {
-            newIcon = null;
-        }
-
-        viewModel.ShortcutIcon = newIcon;
+        viewModel.LoadIcon(BrowseFileDialog.FileName);
     }
 
     private void PathBrowseButton_Click(object sender, EventArgs e)
@@ -291,19 +262,6 @@ public partial class MainForm : Form
         var filename = BrowseFileDialog.FileName;
 
         viewModel.TargetPath = filename;
-
-        if (String.IsNullOrWhiteSpace(ShortcutNameTextBox.Text) ||
-            ShortcutNameTextBox.Text == NewShortcutText ||
-            ShortcutNameTextBox.Text == NewFolderText)
-        {
-            viewModel.ShortcutName = Path.GetFileNameWithoutExtension(filename);
-        }
-
-        if (String.IsNullOrWhiteSpace(StartInTextBox.Text))
-            viewModel.StartInPath = Path.GetDirectoryName(filename);
-
-        if (IconPictureBox.Image is null)
-            SetIcon(filename);
     }
 
     private void StartInBrowseButton_Click(object sender, EventArgs e)

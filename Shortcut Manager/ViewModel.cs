@@ -1,11 +1,34 @@
-﻿using System.Windows.Forms;
-using ShortcutManager.Data;
+﻿using ShortcutManager.Data;
 
 namespace ShortcutManager;
 
 public sealed class ViewModel : ObservableObject
 {
+    private IEnumerable<(int Index, string Name)> selectedNodeLocation = [];
     private IShortcutOrFolder? currentItem;
+
+    public void SetCurrentItem(
+        IEnumerable<(int Index, string Name)> selectedNodeLocation,
+        IShortcutOrFolder? currentItem)
+    {
+        this.selectedNodeLocation = selectedNodeLocation;
+        this.currentItem = currentItem;
+
+        if (currentItem is null)
+            return;
+
+        ShortcutName = currentItem.Name;
+        ShortcutIcon = currentItem.Icon;
+
+        if (currentItem is not ShortcutItem shortcut)
+            return;
+
+        TargetPath = shortcut.TargetPath;
+        Arguments = shortcut.Arguments;
+        StartInPath = shortcut.StartInPath;
+        ToolTip = shortcut.ToolTip;
+    }
+
     public IShortcutOrFolder? CurrentItem
     {
         get => currentItem;
@@ -14,25 +37,10 @@ public sealed class ViewModel : ObservableObject
             if (!SetFieldWithoutNotification(ref currentItem, value))
                 return;
 
-            if (value is not null)
-            {
-                ShortcutName = value.Name;
-                ShortcutIcon = value.Icon;
-
-                if (value is ShortcutItem item)
-                {
-                    TargetPath = item.TargetPath;
-                    Arguments = item.Arguments;
-                    StartInPath = item.StartInPath;
-                    ToolTip = item.ToolTip;
-                }
-            }
-
             RaisePropertyChanged();
         }
     }
 
-    private IEnumerable<(int Index, string Name)> selectedNodeLocation = [];
     public IEnumerable<(int Index, string Name)> SelectedNodeLocation
     {
         get => selectedNodeLocation;
@@ -95,13 +103,35 @@ public sealed class ViewModel : ObservableObject
         get => targetPath;
         set
         {
+            var oldTargetPath = targetPath;
+
             if (!SetFieldWithoutNotification(ref targetPath, value))
                 return;
 
             if (CurrentItem is ShortcutItem item)
+            {
                 ShortcutData.Instance.ReplaceItem(
                     selectedNodeLocation,
                     item with { TargetPath = value });
+
+                if (value is not null)
+                {
+                    if (String.IsNullOrWhiteSpace(ShortcutName) ||
+                        ShortcutName == oldTargetPath ||
+                        ShortcutName == ShortcutData.NewShortcutText ||
+                        ShortcutName == ShortcutData.NewFolderText)
+                    {
+                        ShortcutName = Path.GetFileNameWithoutExtension(value);
+                    }
+
+                    if (String.IsNullOrWhiteSpace(StartInPath) ||
+                        StartInPath == oldTargetPath)
+                        StartInPath = Path.GetDirectoryName(value);
+
+                    if (ShortcutIcon is null)
+                        LoadIcon(value);
+                }
+            }
 
             RaisePropertyChanged();
         }
@@ -159,5 +189,28 @@ public sealed class ViewModel : ObservableObject
 
             RaisePropertyChanged();
         }
+    }
+
+    public void LoadIcon(string filename)
+    {
+        Icon? newIcon;
+
+        var extension = Path.GetExtension(filename).ToUpper();
+        if (extension == "EXE" ||
+            extension == "COM" ||
+            extension == "CMD")
+        {
+            newIcon = Icon.ExtractAssociatedIcon(filename);
+        }
+        else if (extension == "ICO")
+        {
+            newIcon = new Icon(filename);
+        }
+        else
+        {
+            newIcon = null;
+        }
+
+        ShortcutIcon = newIcon;
     }
 }

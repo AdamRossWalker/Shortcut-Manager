@@ -7,13 +7,16 @@ namespace ShortcutManager.Data;
 /// </summary>
 public sealed class ShortcutData
 {
+    public const string NewShortcutText = "New Shortcut";
+    public const string NewFolderText = "New Folder";
+
     private static readonly string filename = "ShortcutData.json";
 
     public static ShortcutData Instance { get; } = new();
 
     public ShortcutFolder Root { get; private set; }
 
-    public ShortcutData()
+    private ShortcutData()
     {
         Root = 
             new ShortcutFolder
@@ -41,38 +44,32 @@ public sealed class ShortcutData
     public IShortcutOrFolder GetItem(
         IEnumerable<(int Index, string Name)> location)
     =>
-        GetItem(location, Root);
+        GetItem(Root, location);
 
     private static IShortcutOrFolder GetItem(
-        IEnumerable<(int Index, string Name)> location,
-        IShortcutOrFolder parent)
+        IShortcutOrFolder parent,
+        IEnumerable<(int Index, string Name)> location)
     {
         if (!location.Any())
             return parent;
 
         if (parent is not ShortcutFolder folder)
-        { 
             return parent;
-        }
 
         var childCount = folder.Children.Count();
 
         var childLocation = location.First();
         if (childLocation.Index >= childCount)
-        {
             return parent;
-        }
 
         // Make sure the target oldChild lines up with the location.
         var childItem = folder.Children.Skip(childLocation.Index).First();
         if (childItem.Name != childLocation.Name)
-        {
             return parent;
-        }
 
         return GetItem(
-            location.Skip(1),
-            childItem);
+            childItem,
+            location.Skip(1));
     }
 
     public void AddItem(
@@ -125,30 +122,22 @@ public sealed class ShortcutData
     {
         // If we are at the target leaf node, just make the change.
         if (!location.Any())
-        {
             return createNewItemFrom(oldItem);
-        }
 
         // Otherwise, we should be on a folder.
         if (oldItem is not ShortcutFolder oldFolder)
-        {
             return oldItem;
-        }
         
         var oldChildCount = oldFolder.Children.Count();
 
         var oldChildLocation = location.FirstOrDefault();
         if (oldChildLocation.Index >= oldChildCount)
-        {
             return oldItem;
-        }
 
         // Make sure the target oldChild lines up with the location.
         var oldChildItem = oldFolder.Children.Skip(oldChildLocation.Index).First();
         if (oldChildItem.Name != oldChildLocation.Name)
-        {
             return oldItem;
-        }
 
         // We now need a new folder to hold the mutated child.
         // Add one to the new capacity just in case this is an addition operation.
