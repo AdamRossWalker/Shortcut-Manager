@@ -1,17 +1,10 @@
 ﻿namespace ShortcutManager.Data;
 
-public sealed class ShortcutFolder : IShortcutOrFolder
+public sealed record ShortcutFolder : IShortcutOrFolder
 {
-    public string? Name { get; set; }
+    public required string? Name { get; init; }
     
-    public Icon? Icon { get; set; }
+    public required Icon? Icon { get; init; }
 
-    public IEnumerable<IShortcutOrFolder> Children { get; set; } = [];
-
-    public IShortcutOrFolder Clone() => new ShortcutFolder()
-    {
-        Name = Name,
-        Icon = Icon,
-        Children = [.. Children.Select(c => c.Clone())],
-    };
+    public required IEnumerable<IShortcutOrFolder> Children { get; init; }
 }

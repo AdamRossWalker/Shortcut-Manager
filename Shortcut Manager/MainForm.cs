@@ -119,6 +119,11 @@ public partial class MainForm : Form
             new ShortcutItem
             {
                 Name = NewShortcutText,
+                Icon = null,
+                TargetPath = null,
+                Arguments = null,
+                StartInPath = null,
+                ToolTip = null,
             });
 
         RefreshTree();
@@ -131,6 +136,8 @@ public partial class MainForm : Form
             new ShortcutFolder
             {
                 Name = NewFolderText,
+                Icon = null,
+                Children = [],
             });
 
         RefreshTree();
@@ -244,7 +251,14 @@ public partial class MainForm : Form
         if (item is null)
             return;
 
-        item.Name = name;
+        ShortcutData.Instance.ReplaceItem(
+            SelectedNodeLocation(),
+            item switch
+            {
+                ShortcutFolder folder => folder with { Name = name },
+                ShortcutItem shortcut => shortcut with { Name = name },
+                _ => item,
+            });
     }
 
     private void SetIconDataOnly(Icon? icon)
@@ -253,7 +267,14 @@ public partial class MainForm : Form
         if (item is null)
             return;
 
-        item.Icon = icon;
+        ShortcutData.Instance.ReplaceItem(
+            SelectedNodeLocation(),
+            item switch
+            {
+                ShortcutFolder folder => folder with { Icon = icon },
+                ShortcutItem shortcut => shortcut with { Icon = icon },
+                _ => item,
+            });
     }
 
     private void SetPathDataOnly(string? path)
@@ -261,7 +282,9 @@ public partial class MainForm : Form
         if (CurrentItem is not ShortcutItem item)
             return;
 
-        item.TargetPath = path;
+        ShortcutData.Instance.ReplaceItem(
+            SelectedNodeLocation(),
+            item with { TargetPath = path });
     }
 
     private void SetArgumentsDataOnly(string? arguments)
@@ -269,7 +292,9 @@ public partial class MainForm : Form
         if (CurrentItem is not ShortcutItem item)
             return;
 
-        item.Arguments = arguments;
+        ShortcutData.Instance.ReplaceItem(
+            SelectedNodeLocation(),
+            item with { Arguments = arguments });
     }
 
     private void SetStartInDataOnly(string? startInPath)
@@ -277,14 +302,18 @@ public partial class MainForm : Form
         if (CurrentItem is not ShortcutItem item)
             return;
 
-        item.StartInPath = startInPath;
+        ShortcutData.Instance.ReplaceItem(
+            SelectedNodeLocation(),
+            item with { StartInPath = startInPath });
     }
     private void SetToolTipDataOnly(string? toolTip)
     {
         if (CurrentItem is not ShortcutItem item)
             return;
 
-        item.ToolTip = toolTip;
+        ShortcutData.Instance.ReplaceItem(
+            SelectedNodeLocation(),
+            item with { ToolTip = toolTip });
     }
 
     private void SetNameUiOnly(string? name) =>

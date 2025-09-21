@@ -1,26 +1,16 @@
 ﻿namespace ShortcutManager.Data;
 
-public sealed class ShortcutItem : IShortcutOrFolder
+public sealed record ShortcutItem : IShortcutOrFolder
 {
-    public string? Name { get; set; }
+    public required string? Name { get; init; }
 
-    public Icon? Icon { get; set; }
+    public required Icon? Icon { get; init; }
 
-    public string? TargetPath { get; set; }
+    public required string? TargetPath { get; init; }
 
-    public string? Arguments { get; set; }
+    public required string? Arguments { get; init; }
 
-    public string? StartInPath { get; set; }
+    public required string? StartInPath { get; init; }
 
-    public string? ToolTip { get; set; }
-
-    public IShortcutOrFolder Clone() => new ShortcutItem()
-    {
-        Name = Name,
-        Icon = Icon,
-        TargetPath = TargetPath,
-        Arguments = Arguments,
-        StartInPath = StartInPath,
-        ToolTip = ToolTip,
-    };
+    public required string? ToolTip { get; init; }
 }
