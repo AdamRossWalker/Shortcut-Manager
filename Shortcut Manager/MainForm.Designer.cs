@@ -139,7 +139,7 @@
             MainTableLayoutPanel.RowStyles.Add(new RowStyle());
             MainTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             MainTableLayoutPanel.Size = new Size(800, 450);
-            MainTableLayoutPanel.TabIndex = 1;
+            MainTableLayoutPanel.TabIndex = 0;
             // 
             // MainToolStrip
             // 
@@ -186,7 +186,7 @@
             IconLabel.Location = new Point(328, 34);
             IconLabel.Name = "IconLabel";
             IconLabel.Size = new Size(100, 118);
-            IconLabel.TabIndex = 2;
+            IconLabel.TabIndex = 1;
             IconLabel.Text = "Icon";
             IconLabel.TextAlign = ContentAlignment.MiddleRight;
             // 
@@ -197,7 +197,7 @@
             PathLabel.Location = new Point(328, 189);
             PathLabel.Name = "PathLabel";
             PathLabel.Size = new Size(100, 42);
-            PathLabel.TabIndex = 3;
+            PathLabel.TabIndex = 5;
             PathLabel.Text = "Path";
             PathLabel.TextAlign = ContentAlignment.MiddleRight;
             // 
@@ -208,7 +208,7 @@
             ArgumentsLabel.Location = new Point(328, 231);
             ArgumentsLabel.Name = "ArgumentsLabel";
             ArgumentsLabel.Size = new Size(100, 37);
-            ArgumentsLabel.TabIndex = 4;
+            ArgumentsLabel.TabIndex = 8;
             ArgumentsLabel.Text = "Arguments";
             ArgumentsLabel.TextAlign = ContentAlignment.MiddleRight;
             // 
@@ -219,7 +219,7 @@
             ToolTipLabel.Location = new Point(328, 310);
             ToolTipLabel.Name = "ToolTipLabel";
             ToolTipLabel.Size = new Size(100, 37);
-            ToolTipLabel.TabIndex = 5;
+            ToolTipLabel.TabIndex = 13;
             ToolTipLabel.Text = "ToolTip";
             ToolTipLabel.TextAlign = ContentAlignment.MiddleRight;
             // 
@@ -239,7 +239,7 @@
             PathTextBox.MaxLength = 255;
             PathTextBox.Name = "PathTextBox";
             PathTextBox.Size = new Size(320, 31);
-            PathTextBox.TabIndex = 7;
+            PathTextBox.TabIndex = 6;
             // 
             // ToolTipTextBox
             // 
@@ -248,7 +248,7 @@
             ToolTipTextBox.MaxLength = 255;
             ToolTipTextBox.Name = "ToolTipTextBox";
             ToolTipTextBox.Size = new Size(320, 31);
-            ToolTipTextBox.TabIndex = 8;
+            ToolTipTextBox.TabIndex = 14;
             // 
             // ArgumentsTextBox
             // 
@@ -265,7 +265,7 @@
             IconBrowseButton.Location = new Point(760, 75);
             IconBrowseButton.Name = "IconBrowseButton";
             IconBrowseButton.Size = new Size(36, 36);
-            IconBrowseButton.TabIndex = 10;
+            IconBrowseButton.TabIndex = 2;
             IconBrowseButton.Text = "...";
             IconBrowseButton.UseVisualStyleBackColor = true;
             IconBrowseButton.Click += IconBrowseButton_Click;
@@ -277,7 +277,7 @@
             PathBrowseButton.Location = new Point(760, 192);
             PathBrowseButton.Name = "PathBrowseButton";
             PathBrowseButton.Size = new Size(36, 36);
-            PathBrowseButton.TabIndex = 11;
+            PathBrowseButton.TabIndex = 7;
             PathBrowseButton.Text = "...";
             PathBrowseButton.UseVisualStyleBackColor = true;
             PathBrowseButton.Click += PathBrowseButton_Click;
@@ -289,7 +289,7 @@
             ShortcutNameLabel.Location = new Point(328, 152);
             ShortcutNameLabel.Name = "ShortcutNameLabel";
             ShortcutNameLabel.Size = new Size(100, 37);
-            ShortcutNameLabel.TabIndex = 12;
+            ShortcutNameLabel.TabIndex = 3;
             ShortcutNameLabel.Text = "Name";
             ShortcutNameLabel.TextAlign = ContentAlignment.MiddleRight;
             // 
@@ -300,7 +300,7 @@
             ShortcutNameTextBox.MaxLength = 255;
             ShortcutNameTextBox.Name = "ShortcutNameTextBox";
             ShortcutNameTextBox.Size = new Size(320, 31);
-            ShortcutNameTextBox.TabIndex = 13;
+            ShortcutNameTextBox.TabIndex = 4;
             // 
             // StartInLabel
             // 
@@ -309,7 +309,7 @@
             StartInLabel.Location = new Point(328, 268);
             StartInLabel.Name = "StartInLabel";
             StartInLabel.Size = new Size(100, 42);
-            StartInLabel.TabIndex = 14;
+            StartInLabel.TabIndex = 10;
             StartInLabel.Text = "Start In";
             StartInLabel.TextAlign = ContentAlignment.MiddleRight;
             // 
@@ -320,7 +320,7 @@
             StartInTextBox.MaxLength = 255;
             StartInTextBox.Name = "StartInTextBox";
             StartInTextBox.Size = new Size(320, 31);
-            StartInTextBox.TabIndex = 15;
+            StartInTextBox.TabIndex = 11;
             // 
             // StartInBrowseButton
             // 
@@ -328,7 +328,7 @@
             StartInBrowseButton.Location = new Point(760, 271);
             StartInBrowseButton.Name = "StartInBrowseButton";
             StartInBrowseButton.Size = new Size(36, 36);
-            StartInBrowseButton.TabIndex = 16;
+            StartInBrowseButton.TabIndex = 12;
             StartInBrowseButton.Text = "...";
             StartInBrowseButton.UseVisualStyleBackColor = true;
             StartInBrowseButton.Click += StartInBrowseButton_Click;
