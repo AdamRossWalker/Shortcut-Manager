@@ -24,14 +24,24 @@ public partial class MainForm : Form
 
     private void RefreshTree()
     {
-        MainTree.Nodes.Clear();
-        AddShortcutsToTree(parent: null, ShortcutData.Instance.Root);
-        RefreshSelectedShortcut();
+        MainTree.SuspendLayout();
+        try
+        {
+
+            MainTree.Nodes.Clear();
+            AddShortcutsToTree(parent: null, ShortcutData.Instance.Root.Children);
+            RefreshSelectedShortcut();
+            MainTree.ExpandAll();
+        }
+        finally 
+        {
+            MainTree.ResumeLayout();
+        }
     }
 
     private void AddShortcutsToTree(
         TreeNode? parent,
-        List<IShortcutOrFolder> elements)
+        IEnumerable<IShortcutOrFolder> elements)
     {
         var container = parent?.Nodes ?? MainTree.Nodes;
 
@@ -46,80 +56,92 @@ public partial class MainForm : Form
         }
     }
 
-    private TreeNode? GetSelectedFolderTreeNode() =>
-        GetParentFolderTreeNode(MainTree.SelectedNode);
+    private IEnumerable<(int Index, string Name)> SelectedNodeLocation() =>
+        NodeLocation(MainTree.SelectedNode);
 
-    private IShortcutOrFolder? CurrentItem =>
-        MainTree.SelectedNode?.Tag as IShortcutOrFolder;
-
-    private static TreeNode? GetParentFolderTreeNode(TreeNode? node)
+    private static IEnumerable<(int Index, string Name)> NodeLocation(TreeNode? node)
     {
         if (node is null)
-            return null;
+            yield break;
 
-        if (node.Tag is ShortcutFolder)
-            return node;
+        foreach (var parentNodes in NodeLocation(node.Parent))
+            yield return parentNodes;
 
-        return GetParentFolderTreeNode(node.Parent);
+        yield return (node.Index, node.Text);
     }
 
-    private (List<IShortcutOrFolder> DataLocation, TreeNodeCollection TreeLocation) GetSelectedFolder()
+    private void SelectBestNodeFrom(IEnumerable<(int Index, string Name)> nodeLocation)
     {
-        var parent = GetSelectedFolderTreeNode();
+        var currentNodeCollection = MainTree.Nodes;
+        var currentNode = null as TreeNode;
 
-        if (parent is not null &&
-            parent.Tag is ShortcutFolder folder)
-            return (folder.Children, parent.Nodes);
+        foreach (var location in nodeLocation)
+        {
+            // Is this location a perfect match?
+            if (currentNodeCollection.Count > location.Index &&
+                currentNodeCollection[location.Index].Name == location.Name)
+            {
+                currentNode = currentNodeCollection[location.Index];
+                currentNodeCollection = currentNode.Nodes;
+                continue;
+            }
 
-        return (ShortcutData.Instance.Root, MainTree.Nodes);
+            // Find other nodes that have the same name, then pick the nearest of those.
+            var nearestNodeMatchingName = 
+                currentNodeCollection
+                .Cast<TreeNode>()
+                .Where(n => n.Name == location.Name)
+                .OrderBy(n => Math.Abs(n.Index - location.Index))
+                .ThenBy(n => n.Index)
+                .FirstOrDefault();
+
+            if (nearestNodeMatchingName is not null)
+            {
+                currentNode = nearestNodeMatchingName;
+                currentNodeCollection = currentNode.Nodes;
+                continue;
+            }
+
+            // Give up, the tree has changed too much.
+            break;
+        }
+
+        MainTree.SelectedNode = currentNode;
     }
+
+    private IShortcutOrFolder? CurrentItem =>
+        ShortcutData.Instance.GetItem(SelectedNodeLocation());
 
     private void AddShortcutButton_Click(object sender, EventArgs e)
     {
-        var (dataLocation, treeLocation) = GetSelectedFolder();
-
-        var newShortcut = new ShortcutItem
-        {
-            Name = NewShortcutText,
-        };
-
-        dataLocation.Add(newShortcut);
-        treeLocation.Add(
-            new TreeNode(newShortcut.Name)
+        ShortcutData.Instance.AddItem(
+            SelectedNodeLocation(),
+            new ShortcutItem
             {
-                Tag = newShortcut,
+                Name = NewShortcutText,
             });
+
+        RefreshTree();
     }
 
     private void AddFolderButton_Click(object sender, EventArgs e)
     {
-        var (dataLocation, treeLocation) = GetSelectedFolder();
-
-        var newShortcutFolder = new ShortcutFolder
-        {
-            Name = NewFolderText,
-        };
-
-        dataLocation.Add(newShortcutFolder);
-        treeLocation.Add(
-            new TreeNode(newShortcutFolder.Name)
+        ShortcutData.Instance.AddItem(
+            SelectedNodeLocation(),
+            new ShortcutFolder
             {
-                Tag = newShortcutFolder,
+                Name = NewFolderText,
             });
+
+        RefreshTree();
     }
 
     private void DeleteButton_Click(object sender, EventArgs e)
     {
-        var selectedNode = MainTree.SelectedNode;
-        if (selectedNode is null)
-            return;
-
-        var (dataLocation, treeLocation) = GetSelectedFolder();
-
-        if (selectedNode.Tag is IShortcutOrFolder treeElement)
-            dataLocation.Remove(treeElement);
-
-        treeLocation.Remove(selectedNode);
+        ShortcutData.Instance.DeleteItem(
+            SelectedNodeLocation());
+        
+        RefreshTree();
     }
 
     private void MainTree_AfterSelect(object sender, TreeViewEventArgs e) =>
@@ -127,10 +149,10 @@ public partial class MainForm : Form
 
     private void RefreshSelectedShortcut()
     {
-        var tag = MainTree.SelectedNode?.Tag as IShortcutOrFolder;
-        var shortcut = tag as ShortcutItem;
-
-        var isFolder = tag is ShortcutFolder;
+        var item = CurrentItem;
+        var shortcut = item as ShortcutItem;
+        
+        var isFolder = item is ShortcutFolder;
         var isShortcut = shortcut is not null;
         var isEither = isFolder | isShortcut;
 
@@ -161,10 +183,10 @@ public partial class MainForm : Form
             DeleteButton.Visible = isEither;
             MainTreeContextMenuAddDeleteButton.Visible = isEither;
 
-            if (tag is not null)
+            if (item is not null)
             {
-                IconPictureBox.Image = tag.Icon?.ToBitmap();
-                ShortcutNameTextBox.Text = tag.Name;
+                IconPictureBox.Image = item.Icon?.ToBitmap();
+                ShortcutNameTextBox.Text = item.Name;
             }
 
             if (shortcut is not null)
