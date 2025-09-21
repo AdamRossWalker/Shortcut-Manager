@@ -6,5 +6,12 @@ public sealed class ShortcutFolder : IShortcutOrFolder
     
     public Icon? Icon { get; set; }
 
-    public List<IShortcutOrFolder> Children { get; } = [];
+    public List<IShortcutOrFolder> Children { get; private set; } = [];
+
+    public IShortcutOrFolder Clone() => new ShortcutFolder()
+    {
+        Name = Name,
+        Icon = Icon,
+        Children = [.. Children.Select(c => c.Clone())],
+    };
 }
