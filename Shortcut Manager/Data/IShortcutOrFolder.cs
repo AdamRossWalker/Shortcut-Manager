@@ -8,5 +8,6 @@ public interface IShortcutOrFolder
 {
     public string? Name { get; }
 
+    [JsonConverter(typeof(JsonIconConverter))]
     public Icon? Icon { get; }
 }

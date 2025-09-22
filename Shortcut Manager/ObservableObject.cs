@@ -20,10 +20,9 @@ public abstract class ObservableObject : INotifyPropertyChanged
         return true;
     }
 
-    protected bool SetFieldWithoutNotification<T>(
+    protected static bool SetFieldWithoutNotification<T>(
         ref T field,
-        T newValue,
-        [CallerMemberName] string propertyName = null!)
+        T newValue)
     {
         if (EqualityComparer<T>.Default.Equals(field, newValue))
             return false;

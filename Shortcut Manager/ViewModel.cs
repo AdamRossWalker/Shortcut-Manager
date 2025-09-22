@@ -196,13 +196,13 @@ public sealed class ViewModel : ObservableObject
         Icon? newIcon;
 
         var extension = Path.GetExtension(filename).ToUpper();
-        if (extension == "EXE" ||
-            extension == "COM" ||
-            extension == "CMD")
+        if (extension == ".EXE" ||
+            extension == ".COM" ||
+            extension == ".CMD")
         {
             newIcon = Icon.ExtractAssociatedIcon(filename);
         }
-        else if (extension == "ICO")
+        else if (extension == ".ICO")
         {
             newIcon = new Icon(filename);
         }

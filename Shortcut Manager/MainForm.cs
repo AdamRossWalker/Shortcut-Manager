@@ -11,12 +11,12 @@ public partial class MainForm : Form
         InitializeComponent();
         
         AddTextBoxBinding(ShortcutNameTextBox, nameof(ViewModel.ShortcutName));
-        AddTextBoxBinding(PathTextBox, nameof(ViewModel.TargetPath));
+        AddTextBoxBinding(TargetPathTextBox, nameof(ViewModel.TargetPath));
         AddTextBoxBinding(ArgumentsTextBox, nameof(ViewModel.Arguments));
         AddTextBoxBinding(StartInTextBox, nameof(ViewModel.StartInPath));
         AddTextBoxBinding(ToolTipTextBox, nameof(ViewModel.ToolTip));
 
-        // IconPictureBox.DataBindings.Add(nameof(PictureBox.Image), viewModel, nameof(ViewModel.ShortcutBitmap));
+        IconPictureBox.DataBindings.Add(nameof(PictureBox.Image), viewModel, nameof(ViewModel.ShortcutBitmap), true);
 
         viewModel.PropertyChanged += (sender, property) =>
         {
@@ -142,11 +142,21 @@ public partial class MainForm : Form
             }
 
             // Fallback to the same index
+            if (location.Index < currentNodeCollection.Count)
             {
                 currentNode = currentNodeCollection[location.Index];
                 currentNodeCollection = currentNode.Nodes;
                 continue;
             }
+
+            if (currentNodeCollection.Count > 0)
+            {
+                currentNode = currentNodeCollection[^1];
+                currentNodeCollection = currentNode.Nodes;
+                continue;
+            }
+
+            break;
         }
 
         MainTree.SelectedNode = currentNode;
@@ -217,8 +227,8 @@ public partial class MainForm : Form
             ShortcutNameLabel.Visible = isEither;
             ShortcutNameTextBox.Visible = isEither;
 
-            PathLabel.Visible = isShortcut;
-            PathTextBox.Visible = isShortcut;
+            TargetPathLabel.Visible = isShortcut;
+            TargetPathTextBox.Visible = isShortcut;
             PathBrowseButton.Visible = isShortcut;
 
             ArgumentsLabel.Visible = isShortcut;
@@ -234,17 +244,32 @@ public partial class MainForm : Form
             DeleteButton.Visible = isEither;
             MainTreeContextMenuAddDeleteButton.Visible = isEither;
 
+            // For some crazy reason setting all the controls to invisible doesn't shrink the row to zero, 
+            // So I'm doing it manually.
+            var shortcutRowSizeType = isShortcut ? SizeType.AutoSize : SizeType.Absolute;
+            
+            MainTableLayoutPanel.RowStyles[4].SizeType = shortcutRowSizeType;
+            MainTableLayoutPanel.RowStyles[5].SizeType = shortcutRowSizeType;
+            MainTableLayoutPanel.RowStyles[6].SizeType = shortcutRowSizeType;
+            MainTableLayoutPanel.RowStyles[4].Height = 0;
+            MainTableLayoutPanel.RowStyles[5].Height = 0;
+            MainTableLayoutPanel.RowStyles[6].Height = 0;
+
             viewModel.SetCurrentItem(location, item);
         }
         finally
         {
             MainTableLayoutPanel.ResumeLayout();
         }
+
+        // For some other crazy reason, I have to size twice to get it to work.  FML.
+        MainTableLayoutPanel.PerformLayout();
+        MainTableLayoutPanel.PerformLayout();
     }
 
     private void IconBrowseButton_Click(object sender, EventArgs e)
     {
-        BrowseFileDialog.Filter = "Icons (*.ico)|Executable File (*.exe;*.com;*.cmd;*.bat)|All Files (*.*)";
+        BrowseFileDialog.Filter = "Executable File (*.exe;*.com;*.cmd)|*.exe;*.com;*.cmd|Icons (*.ico)|*.ico|All Files (*.*)|*.*";
         BrowseFileDialog.FilterIndex = 0;
 
         if (BrowseFileDialog.ShowDialog() != DialogResult.OK)
@@ -255,7 +280,7 @@ public partial class MainForm : Form
 
     private void PathBrowseButton_Click(object sender, EventArgs e)
     {
-        BrowseFileDialog.Filter = "Executable File (*.exe;*.com;*.cmd;*.bat)|All Files (*.*)";
+        BrowseFileDialog.Filter = "Executable File (*.exe;*.com;*.cmd;*.bat)|*.exe;*.com;*.cmd;*.bat|All Files (*.*)|*.*";
         BrowseFileDialog.FilterIndex = 0;
 
         BrowseFileDialog.DefaultExt = "Executable File (*.exe;*.com;*.cmd;*.bat)";
