@@ -14,18 +14,28 @@ public sealed class ShortcutData
 
     public static ShortcutData Instance { get; } = new();
 
-    public ShortcutFolder Root { get; private set; }
+    public int DataVersion { get; private set; } = 1;
+
+    private ShortcutFolder root = 
+        new()
+        {
+            Name = "Root",
+            Icon = null,
+            Children = [],
+        };
+
+    public ShortcutFolder Root 
+    { 
+        get => root;
+        private set
+        {
+            root = value;
+            DataVersion++;
+        }
+    }
 
     private ShortcutData()
     {
-        Root = 
-            new ShortcutFolder
-            {
-                Name = "Root",
-                Icon = null,
-                Children = [],
-            };
-
         try
         {
             Root =
@@ -78,16 +88,16 @@ public sealed class ShortcutData
     =>
         CreateNewTree(
             location,
-            parent =>
+            oldItem =>
             {
-                if (parent is not ShortcutFolder parentFolder)
-                    return parent;
+                if (oldItem is not ShortcutFolder oldFolder)
+                    return oldItem;
 
                 return new ShortcutFolder
                 {
-                    Name = parentFolder.Name,
-                    Icon = parentFolder.Icon,
-                    Children = [.. parentFolder.Children, newItem],
+                    Name = oldFolder.Name,
+                    Icon = oldFolder.Icon,
+                    Children = [.. oldFolder.Children, newItem],
                 };
             });
 

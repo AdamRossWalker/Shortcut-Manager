@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 namespace ShortcutManager.Data;
 
@@ -16,4 +17,17 @@ public sealed record ShortcutItem : IShortcutOrFolder
     public required string? StartInPath { get; init; }
 
     public required string? ToolTip { get; init; }
+
+    public void Execute()
+    {
+        if (String.IsNullOrWhiteSpace(TargetPath))
+            return;
+
+        Process.Start(new ProcessStartInfo()
+        {
+            FileName = TargetPath,
+            Arguments = Arguments,
+            WorkingDirectory = StartInPath,
+        });
+    }
 }
