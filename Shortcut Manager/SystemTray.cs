@@ -9,12 +9,17 @@ namespace ShortcutManager;
 public sealed class SystemTray : ApplicationContext
 {
     private readonly NotifyIcon notifyIcon;
-    private readonly ContextMenuStrip shortcutsContextMenu = new() { ShowItemToolTips = true };
+    private readonly ContextMenuStrip shortcutsContextMenu;
     private readonly ContextMenuStrip mainContextMenu;
     private int currentShortcutDataVersion = -1;
 
     public SystemTray()
     {
+        shortcutsContextMenu = new() 
+        { 
+            ShowItemToolTips = true,
+        };
+
         mainContextMenu = new()
         {
             Items =
