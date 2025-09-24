@@ -246,7 +246,7 @@ public partial class MainForm : Form
 
             TargetPathLabel.Visible = isShortcut;
             TargetPathTextBox.Visible = isShortcut;
-            PathBrowseButton.Visible = isShortcut;
+            TargetPathBrowseButton.Visible = isShortcut;
 
             ArgumentsLabel.Visible = isShortcut;
             ArgumentsTextBox.Visible = isShortcut;

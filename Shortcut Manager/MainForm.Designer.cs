@@ -49,7 +49,7 @@
             ToolTipTextBox = new TextBox();
             ArgumentsTextBox = new TextBox();
             IconBrowseButton = new Button();
-            PathBrowseButton = new Button();
+            TargetPathBrowseButton = new Button();
             ShortcutNameLabel = new Label();
             ShortcutNameTextBox = new TextBox();
             StartInLabel = new Label();
@@ -121,7 +121,7 @@
             MainTableLayoutPanel.Controls.Add(ToolTipTextBox, 2, 7);
             MainTableLayoutPanel.Controls.Add(ArgumentsTextBox, 2, 5);
             MainTableLayoutPanel.Controls.Add(IconBrowseButton, 3, 2);
-            MainTableLayoutPanel.Controls.Add(PathBrowseButton, 3, 4);
+            MainTableLayoutPanel.Controls.Add(TargetPathBrowseButton, 3, 4);
             MainTableLayoutPanel.Controls.Add(ShortcutNameLabel, 1, 3);
             MainTableLayoutPanel.Controls.Add(ShortcutNameTextBox, 2, 3);
             MainTableLayoutPanel.Controls.Add(StartInLabel, 1, 6);
@@ -276,18 +276,18 @@
             IconBrowseButton.UseVisualStyleBackColor = true;
             IconBrowseButton.Click += IconBrowseButton_Click;
             // 
-            // PathBrowseButton
+            // TargetPathBrowseButton
             // 
-            PathBrowseButton.AutoSize = true;
-            PathBrowseButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            PathBrowseButton.Dock = DockStyle.Fill;
-            PathBrowseButton.Location = new Point(762, 192);
-            PathBrowseButton.Name = "PathBrowseButton";
-            PathBrowseButton.Size = new Size(35, 35);
-            PathBrowseButton.TabIndex = 7;
-            PathBrowseButton.Text = "...";
-            PathBrowseButton.UseVisualStyleBackColor = true;
-            PathBrowseButton.Click += PathBrowseButton_Click;
+            TargetPathBrowseButton.AutoSize = true;
+            TargetPathBrowseButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            TargetPathBrowseButton.Dock = DockStyle.Fill;
+            TargetPathBrowseButton.Location = new Point(762, 192);
+            TargetPathBrowseButton.Name = "TargetPathBrowseButton";
+            TargetPathBrowseButton.Size = new Size(35, 35);
+            TargetPathBrowseButton.TabIndex = 7;
+            TargetPathBrowseButton.Text = "...";
+            TargetPathBrowseButton.UseVisualStyleBackColor = true;
+            TargetPathBrowseButton.Click += PathBrowseButton_Click;
             // 
             // ShortcutNameLabel
             // 
@@ -382,7 +382,7 @@
         private TextBox ToolTipTextBox;
         private TextBox ArgumentsTextBox;
         private Button IconBrowseButton;
-        private Button PathBrowseButton;
+        private Button TargetPathBrowseButton;
         private ContextMenuStrip MainTreeeMenuStrip;
         private ToolStripMenuItem MainTreeContextMenuAddShortcutButton;
         private ToolStripMenuItem MainTreeContextMenuAddFolderButton;
