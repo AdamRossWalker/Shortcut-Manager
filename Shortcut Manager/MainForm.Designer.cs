@@ -82,26 +82,29 @@
             MainTreeeMenuStrip.ImageScalingSize = new Size(24, 24);
             MainTreeeMenuStrip.Items.AddRange(new ToolStripItem[] { MainTreeContextMenuAddShortcutButton, MainTreeContextMenuAddFolderButton, MainTreeContextMenuAddDeleteButton });
             MainTreeeMenuStrip.Name = "MainTreeeMenuStrip";
-            MainTreeeMenuStrip.Size = new Size(191, 100);
+            MainTreeeMenuStrip.Size = new Size(249, 133);
             // 
             // MainTreeContextMenuAddShortcutButton
             // 
+            MainTreeContextMenuAddShortcutButton.Image = Properties.Resources.Add;
             MainTreeContextMenuAddShortcutButton.Name = "MainTreeContextMenuAddShortcutButton";
-            MainTreeContextMenuAddShortcutButton.Size = new Size(190, 32);
+            MainTreeContextMenuAddShortcutButton.Size = new Size(248, 32);
             MainTreeContextMenuAddShortcutButton.Text = "Add Shortcut";
             MainTreeContextMenuAddShortcutButton.Click += AddShortcutButton_Click;
             // 
             // MainTreeContextMenuAddFolderButton
             // 
+            MainTreeContextMenuAddFolderButton.Image = Properties.Resources.Add;
             MainTreeContextMenuAddFolderButton.Name = "MainTreeContextMenuAddFolderButton";
-            MainTreeContextMenuAddFolderButton.Size = new Size(190, 32);
+            MainTreeContextMenuAddFolderButton.Size = new Size(248, 32);
             MainTreeContextMenuAddFolderButton.Text = "Add Folder";
             MainTreeContextMenuAddFolderButton.Click += AddFolderButton_Click;
             // 
             // MainTreeContextMenuAddDeleteButton
             // 
+            MainTreeContextMenuAddDeleteButton.Image = Properties.Resources.Delete;
             MainTreeContextMenuAddDeleteButton.Name = "MainTreeContextMenuAddDeleteButton";
-            MainTreeContextMenuAddDeleteButton.Size = new Size(190, 32);
+            MainTreeContextMenuAddDeleteButton.Size = new Size(248, 32);
             MainTreeContextMenuAddDeleteButton.Text = "Delete";
             MainTreeContextMenuAddDeleteButton.Click += DeleteButton_Click;
             // 
@@ -160,7 +163,7 @@
             // 
             // AddShortcutButton
             // 
-            AddShortcutButton.Image = (Image)resources.GetObject("AddShortcutButton.Image");
+            AddShortcutButton.Image = Properties.Resources.Add;
             AddShortcutButton.ImageTransparentColor = Color.Magenta;
             AddShortcutButton.Name = "AddShortcutButton";
             AddShortcutButton.Size = new Size(146, 29);
@@ -169,7 +172,7 @@
             // 
             // AddFolderButton
             // 
-            AddFolderButton.Image = (Image)resources.GetObject("AddFolderButton.Image");
+            AddFolderButton.Image = Properties.Resources.Add;
             AddFolderButton.ImageTransparentColor = Color.Magenta;
             AddFolderButton.Name = "AddFolderButton";
             AddFolderButton.Size = new Size(129, 29);
@@ -178,7 +181,7 @@
             // 
             // DeleteButton
             // 
-            DeleteButton.Image = (Image)resources.GetObject("DeleteButton.Image");
+            DeleteButton.Image = Properties.Resources.Delete;
             DeleteButton.ImageTransparentColor = Color.Magenta;
             DeleteButton.Name = "DeleteButton";
             DeleteButton.Size = new Size(90, 29);

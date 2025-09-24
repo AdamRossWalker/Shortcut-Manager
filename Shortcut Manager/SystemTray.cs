@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using ShortcutManager.Data;
+using ShortcutManager.Properties;
 
 namespace ShortcutManager;
 
@@ -24,8 +25,8 @@ public sealed class SystemTray : ApplicationContext
         {
             Items =
             {
-                new ToolStripMenuItem("&Open...", null, Open),
-                new ToolStripMenuItem("E&xit", null, Exit)
+                new ToolStripMenuItem("&Open...", Resources.ApplicationIcon.ToBitmap(), Open),
+                new ToolStripMenuItem("E&xit", Resources.Delete, Exit)
             },
         };
 
