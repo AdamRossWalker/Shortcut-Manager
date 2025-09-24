@@ -7,7 +7,7 @@ namespace ShortcutManager;
 public class JsonIconConverter : JsonConverter<Icon>
 {
     public override Icon? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
-        Icon.FromHandle(new Bitmap(new MemoryStream(reader.GetBytesFromBase64())).GetHicon());
+        new Bitmap(new MemoryStream(reader.GetBytesFromBase64())).ToIcon();
 
     public override void Write(Utf8JsonWriter writer, Icon value, JsonSerializerOptions options)
     {

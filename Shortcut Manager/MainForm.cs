@@ -205,7 +205,6 @@ public partial class MainForm : Form
             new ShortcutFolder
             {
                 Name = ShortcutData.NewFolderText,
-                Icon = null,
                 Children = [],
             });
 

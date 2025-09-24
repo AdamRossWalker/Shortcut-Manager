@@ -20,7 +20,6 @@ public sealed class ShortcutData
         new()
         {
             Name = "Root",
-            Icon = null,
             Children = [],
         };
 

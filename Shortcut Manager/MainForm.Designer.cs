@@ -82,13 +82,13 @@
             MainTreeeMenuStrip.ImageScalingSize = new Size(24, 24);
             MainTreeeMenuStrip.Items.AddRange(new ToolStripItem[] { MainTreeContextMenuAddShortcutButton, MainTreeContextMenuAddFolderButton, MainTreeContextMenuAddDeleteButton });
             MainTreeeMenuStrip.Name = "MainTreeeMenuStrip";
-            MainTreeeMenuStrip.Size = new Size(249, 133);
+            MainTreeeMenuStrip.Size = new Size(199, 100);
             // 
             // MainTreeContextMenuAddShortcutButton
             // 
             MainTreeContextMenuAddShortcutButton.Image = Properties.Resources.Add;
             MainTreeContextMenuAddShortcutButton.Name = "MainTreeContextMenuAddShortcutButton";
-            MainTreeContextMenuAddShortcutButton.Size = new Size(248, 32);
+            MainTreeContextMenuAddShortcutButton.Size = new Size(198, 32);
             MainTreeContextMenuAddShortcutButton.Text = "Add Shortcut";
             MainTreeContextMenuAddShortcutButton.Click += AddShortcutButton_Click;
             // 
@@ -96,7 +96,7 @@
             // 
             MainTreeContextMenuAddFolderButton.Image = Properties.Resources.Add;
             MainTreeContextMenuAddFolderButton.Name = "MainTreeContextMenuAddFolderButton";
-            MainTreeContextMenuAddFolderButton.Size = new Size(248, 32);
+            MainTreeContextMenuAddFolderButton.Size = new Size(198, 32);
             MainTreeContextMenuAddFolderButton.Text = "Add Folder";
             MainTreeContextMenuAddFolderButton.Click += AddFolderButton_Click;
             // 
@@ -104,7 +104,7 @@
             // 
             MainTreeContextMenuAddDeleteButton.Image = Properties.Resources.Delete;
             MainTreeContextMenuAddDeleteButton.Name = "MainTreeContextMenuAddDeleteButton";
-            MainTreeContextMenuAddDeleteButton.Size = new Size(248, 32);
+            MainTreeContextMenuAddDeleteButton.Size = new Size(198, 32);
             MainTreeContextMenuAddDeleteButton.Text = "Delete";
             MainTreeContextMenuAddDeleteButton.Click += DeleteButton_Click;
             // 
