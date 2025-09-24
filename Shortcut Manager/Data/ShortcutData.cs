@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using ShortcutManager.UndoRedo;
 
 namespace ShortcutManager.Data;
 
@@ -35,14 +36,22 @@ public sealed class ShortcutData
 
     private ShortcutData()
     {
+        var firstUndoRedoFrameName = "No Shortcuts";
+
         try
         {
             Root =
                 JsonSerializer.Deserialize<ShortcutFolder>(
                     File.ReadAllText(filename)) 
                 ?? Root;
+
+            firstUndoRedoFrameName = "Shortcuts Loaded";
         }
         catch (FileNotFoundException) { }
+
+        UndoRedoManager.Instance.AddFrame(firstUndoRedoFrameName, Root);
+        UndoRedoManager.Instance.ApplyNewShortcutTree += 
+            newRoot => Root = newRoot;
     }
 
     public Task Save() => 
@@ -87,6 +96,7 @@ public sealed class ShortcutData
         IShortcutOrFolder newItem)
     =>
         CreateNewTree(
+            "Add",
             location,
             oldItem =>
             {
@@ -106,6 +116,7 @@ public sealed class ShortcutData
         IShortcutOrFolder newItem)
     =>
         CreateNewTree(
+            "Edit",
             location,
             oldItem => newItem);
 
@@ -113,10 +124,12 @@ public sealed class ShortcutData
         Location location)
     =>
         CreateNewTree(
+            "Delete",
             location,
             oldItem => null);
 
     private void CreateNewTree(
+        string actionName,
         Location location,
         Func<IShortcutOrFolder, IShortcutOrFolder?> createNewItemFrom)
     {
@@ -171,9 +184,11 @@ public sealed class ShortcutData
             };
         }
 
-        Root = (ShortcutFolder)CreateSubTree(
+        var newTree = (ShortcutFolder)CreateSubTree(
             Root,
             location,
             createNewItemFrom)!;
+
+        UndoRedoManager.Instance.AddFrame(actionName, newTree);
     }
 }

@@ -50,7 +50,7 @@ public sealed class ViewModel : ObservableObject
             if (!SetFieldWithoutNotification(ref shortcutName, value))
                 return;
 
-            if (CurrentItem is not null)
+            if (CurrentItem is not null && CurrentItem.Name != value)
             {
                 CurrentItem = CurrentItem switch
                 {
@@ -77,7 +77,7 @@ public sealed class ViewModel : ObservableObject
             if (!SetFieldWithoutNotification(ref shortcutIcon, value))
                 return;
 
-            if (CurrentItem is not null)
+            if (CurrentItem is not null && CurrentItem.Icon != value)
             {
                 CurrentItem = CurrentItem switch
                 {
@@ -110,7 +110,7 @@ public sealed class ViewModel : ObservableObject
             if (!SetFieldWithoutNotification(ref targetPath, value))
                 return;
 
-            if (CurrentItem is ShortcutItem item)
+            if (CurrentItem is ShortcutItem item && item.TargetPath != value)
             {
                 CurrentItem = item with { TargetPath = value };
 
@@ -150,7 +150,7 @@ public sealed class ViewModel : ObservableObject
             if (!SetFieldWithoutNotification(ref arguments, value))
                 return;
 
-            if (CurrentItem is ShortcutItem item)
+            if (CurrentItem is ShortcutItem item && item.Arguments != value)
             {
                 CurrentItem = item with { Arguments = value };
 
@@ -172,7 +172,7 @@ public sealed class ViewModel : ObservableObject
             if (!SetFieldWithoutNotification(ref startInPath, value))
                 return;
 
-            if (CurrentItem is ShortcutItem item)
+            if (CurrentItem is ShortcutItem item && item.StartInPath != value)
             {
                 CurrentItem = item with { StartInPath = value };
 
@@ -194,7 +194,7 @@ public sealed class ViewModel : ObservableObject
             if (!SetFieldWithoutNotification(ref toolTip, value))
                 return;
 
-            if (CurrentItem is ShortcutItem item)
+            if (CurrentItem is ShortcutItem item && item.ToolTip != value)
             {
                 CurrentItem = item with { ToolTip = value };
 

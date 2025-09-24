@@ -40,6 +40,8 @@
             AddShortcutButton = new ToolStripButton();
             AddFolderButton = new ToolStripButton();
             DeleteButton = new ToolStripButton();
+            UndoButton = new ToolStripSplitButton();
+            RedoButton = new ToolStripSplitButton();
             IconLabel = new Label();
             TargetPathLabel = new Label();
             ArgumentsLabel = new Label();
@@ -154,7 +156,7 @@
             // 
             MainTableLayoutPanel.SetColumnSpan(MainToolStrip, 4);
             MainToolStrip.ImageScalingSize = new Size(24, 24);
-            MainToolStrip.Items.AddRange(new ToolStripItem[] { AddShortcutButton, AddFolderButton, DeleteButton });
+            MainToolStrip.Items.AddRange(new ToolStripItem[] { AddShortcutButton, AddFolderButton, DeleteButton, UndoButton, RedoButton });
             MainToolStrip.Location = new Point(0, 0);
             MainToolStrip.Name = "MainToolStrip";
             MainToolStrip.Size = new Size(800, 34);
@@ -187,6 +189,28 @@
             DeleteButton.Size = new Size(90, 29);
             DeleteButton.Text = "Delete";
             DeleteButton.Click += DeleteButton_Click;
+            // 
+            // UndoButton
+            // 
+            UndoButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            UndoButton.Image = Properties.Resources.Undo;
+            UndoButton.ImageTransparentColor = Color.Magenta;
+            UndoButton.Name = "UndoButton";
+            UndoButton.Size = new Size(45, 29);
+            UndoButton.Text = "Undo";
+            UndoButton.ButtonClick += UndoButton_Click;
+            UndoButton.DropDownOpening += UndoButton_DropDownOpening;
+            // 
+            // RedoButton
+            // 
+            RedoButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            RedoButton.Image = Properties.Resources.Redo;
+            RedoButton.ImageTransparentColor = Color.Magenta;
+            RedoButton.Name = "RedoButton";
+            RedoButton.Size = new Size(45, 29);
+            RedoButton.Text = "Redo";
+            RedoButton.ButtonClick += RedoButton_Click;
+            RedoButton.DropDownOpening += RedoButton_DropDownOpening;
             // 
             // IconLabel
             // 
@@ -415,5 +439,7 @@
         private Button StartInBrowseButton;
         private FolderBrowserDialog BrowseFolderDialog;
         private Button ExecuteShortcutButton;
+        private ToolStripSplitButton UndoButton;
+        private ToolStripSplitButton RedoButton;
     }
 }

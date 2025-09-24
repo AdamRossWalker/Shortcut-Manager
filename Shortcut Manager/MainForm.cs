@@ -1,4 +1,6 @@
 using ShortcutManager.Data;
+using ShortcutManager.Properties;
+using ShortcutManager.UndoRedo;
 
 namespace ShortcutManager;
 
@@ -346,5 +348,47 @@ public partial class MainForm : Form
             return;
 
         shortcut.Execute();
+    }
+
+    private void UndoButton_Click(object sender, EventArgs e)
+    {
+        if (UndoRedoManager.Instance.Undo())
+            RefreshTree();
+    }
+
+    private void RedoButton_Click(object sender, EventArgs e)
+    {
+        if (UndoRedoManager.Instance.Redo())
+            RefreshTree();
+    }
+
+    private void UndoButton_DropDownOpening(object sender, EventArgs e)
+    {
+        UndoButton.DropDownItems.Clear();
+
+        foreach (var frame in UndoRedoManager.Instance.UndoFrames)
+            UndoButton.DropDownItems.Add(
+                frame.Name,
+                Resources.Undo,
+                (sender, eventArguments) =>
+                {
+                    if (UndoRedoManager.Instance.SetFrame(frame))
+                        RefreshTree();
+                });
+    }
+
+    private void RedoButton_DropDownOpening(object sender, EventArgs e)
+    {
+        RedoButton.DropDownItems.Clear();
+
+        foreach (var frame in UndoRedoManager.Instance.RedoFrames)
+            RedoButton.DropDownItems.Add(
+                frame.Name,
+                Resources.Redo,
+                (sender, eventArguments) =>
+                {
+                    if (UndoRedoManager.Instance.SetFrame(frame))
+                        RefreshTree();
+                });
     }
 }
