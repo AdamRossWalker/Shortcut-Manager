@@ -62,6 +62,14 @@ public partial class MainForm : Form
             {
                 var node = new TreeNode(element.Name);
 
+                if (element.Icon is not null)
+                {
+                    var newImageIndex = MainTree.ImageList.Images.Count;
+                    MainTree.ImageList.Images.Add(element.Icon);
+                    node.ImageIndex = newImageIndex;
+                    node.SelectedImageIndex = newImageIndex;
+                }
+
                 if (element is ShortcutFolder folder)
                     AddShortcutsToTree(node, folder.Children);
 
@@ -81,6 +89,10 @@ public partial class MainForm : Form
             try
             {
                 MainTree.Nodes.Clear();
+                MainTree.ImageList ??= new ImageList();
+                MainTree.ImageList.Images.Clear();
+                MainTree.ImageList.Images.Add(Resources.MissingIcon);
+
                 AddShortcutsToTree(parent: null, ShortcutData.Instance.Root.Children);
                 MainTree.ExpandAll();
             }
