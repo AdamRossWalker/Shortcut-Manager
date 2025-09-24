@@ -67,10 +67,11 @@
             // 
             MainTree.ContextMenuStrip = MainTreeeMenuStrip;
             MainTree.Dock = DockStyle.Fill;
-            MainTree.Location = new Point(3, 114);
+            MainTree.HideSelection = false;
+            MainTree.Location = new Point(3, 37);
             MainTree.Name = "MainTree";
-            MainTableLayoutPanel.SetRowSpan(MainTree, 7);
-            MainTree.Size = new Size(320, 333);
+            MainTableLayoutPanel.SetRowSpan(MainTree, 8);
+            MainTree.Size = new Size(320, 410);
             MainTree.TabIndex = 0;
             MainTree.AfterSelect += MainTree_AfterSelect;
             // 
@@ -109,7 +110,7 @@
             MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle());
             MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0000076F));
             MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle());
-            MainTableLayoutPanel.Controls.Add(MainTree, 0, 2);
+            MainTableLayoutPanel.Controls.Add(MainTree, 0, 1);
             MainTableLayoutPanel.Controls.Add(MainToolStrip, 0, 0);
             MainTableLayoutPanel.Controls.Add(IconLabel, 1, 2);
             MainTableLayoutPanel.Controls.Add(TargetPathLabel, 1, 4);

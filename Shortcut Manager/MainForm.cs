@@ -162,10 +162,20 @@ public partial class MainForm : Form
         MainTree.SelectedNode = currentNode;
     }
 
+    private IEnumerable<(int Index, string Name)> GetNearestParentFolderLocation(
+        IEnumerable<(int Index, string Name)> startingLocation)
+    {
+        var location = startingLocation;
+        while (ShortcutData.Instance.GetItem(location) is ShortcutItem)
+            location = location.SkipLast(1);
+
+        return location;
+    }
+
     private void AddShortcutButton_Click(object sender, EventArgs e)
     {
         ShortcutData.Instance.AddItem(
-            SelectedLocation(),
+            GetNearestParentFolderLocation(SelectedLocation()),
             new ShortcutItem
             {
                 Name = ShortcutData.NewShortcutText,
@@ -182,7 +192,7 @@ public partial class MainForm : Form
     private void AddFolderButton_Click(object sender, EventArgs e)
     {
         ShortcutData.Instance.AddItem(
-            SelectedLocation(),
+            GetNearestParentFolderLocation(SelectedLocation()),
             new ShortcutFolder
             {
                 Name = ShortcutData.NewFolderText,
