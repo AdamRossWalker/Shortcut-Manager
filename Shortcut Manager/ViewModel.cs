@@ -4,11 +4,11 @@ namespace ShortcutManager;
 
 public sealed class ViewModel : ObservableObject
 {
-    private IEnumerable<(int Index, string Name)> selectedNodeLocation = [];
+    private Location selectedNodeLocation = Location.Empty;
     private IShortcutOrFolder? currentItem;
 
     public void SetCurrentItem(
-        IEnumerable<(int Index, string Name)> selectedNodeLocation,
+        Location selectedNodeLocation,
         IShortcutOrFolder? currentItem)
     {
         this.selectedNodeLocation = selectedNodeLocation;
@@ -41,7 +41,7 @@ public sealed class ViewModel : ObservableObject
         }
     }
 
-    public IEnumerable<(int Index, string Name)> SelectedNodeLocation
+    public Location SelectedNodeLocation
     {
         get => selectedNodeLocation;
         set => SetField(ref selectedNodeLocation, value);

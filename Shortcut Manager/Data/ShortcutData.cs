@@ -52,15 +52,15 @@ public sealed class ShortcutData
             JsonSerializer.Serialize(Root));
 
     public IShortcutOrFolder GetItem(
-        IEnumerable<(int Index, string Name)> location)
+        Location location)
     =>
         GetItem(Root, location);
 
     private static IShortcutOrFolder GetItem(
         IShortcutOrFolder parent,
-        IEnumerable<(int Index, string Name)> location)
+        Location location)
     {
-        if (!location.Any())
+        if (!location.Path.Any())
             return parent;
 
         if (parent is not ShortcutFolder folder)
@@ -68,7 +68,7 @@ public sealed class ShortcutData
 
         var childCount = folder.Children.Count();
 
-        var childLocation = location.First();
+        var childLocation = location.Path.First();
         if (childLocation.Index >= childCount)
             return parent;
 
@@ -79,11 +79,11 @@ public sealed class ShortcutData
 
         return GetItem(
             childItem,
-            location.Skip(1));
+            location.ChildPath);
     }
 
     public void AddItem(
-        IEnumerable<(int Index, string Name)> location,
+        Location location,
         IShortcutOrFolder newItem)
     =>
         CreateNewTree(
@@ -102,7 +102,7 @@ public sealed class ShortcutData
             });
 
     public void ReplaceItem(
-        IEnumerable<(int Index, string Name)> location,
+        Location location,
         IShortcutOrFolder newItem)
     =>
         CreateNewTree(
@@ -110,14 +110,14 @@ public sealed class ShortcutData
             oldItem => newItem);
 
     public void DeleteItem(
-        IEnumerable<(int Index, string Name)> location)
+        Location location)
     =>
         CreateNewTree(
             location,
             oldItem => null);
 
     private void CreateNewTree(
-        IEnumerable<(int Index, string Name)> location,
+        Location location,
         Func<IShortcutOrFolder, IShortcutOrFolder?> createNewItemFrom) 
     =>
         Root = (ShortcutFolder)CreateSubTree(
@@ -127,11 +127,11 @@ public sealed class ShortcutData
 
     private static IShortcutOrFolder? CreateSubTree(
         IShortcutOrFolder oldItem,
-        IEnumerable<(int Index, string Name)> location,
+        Location location,
         Func<IShortcutOrFolder, IShortcutOrFolder?> createNewItemFrom)
     {
         // If we are at the target leaf node, just make the change.
-        if (!location.Any())
+        if (!location.Path.Any())
             return createNewItemFrom(oldItem);
 
         // Otherwise, we should be on a folder.
@@ -140,7 +140,7 @@ public sealed class ShortcutData
         
         var oldChildCount = oldFolder.Children.Count();
 
-        var oldChildLocation = location.FirstOrDefault();
+        var oldChildLocation = location.Path.FirstOrDefault();
         if (oldChildLocation.Index >= oldChildCount)
             return oldItem;
 
@@ -159,7 +159,7 @@ public sealed class ShortcutData
         var newChildItem = 
             CreateSubTree(
                 oldChildItem,
-                location.Skip(1),
+                location.ChildPath,
                 createNewItemFrom);
 
         if (newChildItem is not null)

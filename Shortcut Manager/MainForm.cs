@@ -95,10 +95,13 @@ public partial class MainForm : Form
         }
     }
 
-    private IEnumerable<(int Index, string Name)> SelectedLocation() =>
-        LocationOf(MainTree.SelectedNode);
+    private Location SelectedLocation() =>
+        new() 
+        { 
+            Path = LocationOf(MainTree.SelectedNode),
+        };
 
-    private static IEnumerable<(int Index, string Name)> LocationOf(TreeNode? node)
+    private static IEnumerable<ChildLocation> LocationOf(TreeNode? node)
     {
         if (node is null)
             yield break;
@@ -106,15 +109,19 @@ public partial class MainForm : Form
         foreach (var parentNodes in LocationOf(node.Parent))
             yield return parentNodes;
 
-        yield return (node.Index, node.Text);
+        yield return new() 
+        { 
+            Index = node.Index, 
+            Name = node.Text ,
+        };
     }
 
-    private void SelectBestNodeFrom(IEnumerable<(int Index, string Name)> nodeLocation)
+    private void SelectBestNodeFrom(Location nodeLocation)
     {
         var currentNodeCollection = MainTree.Nodes;
         var currentNode = null as TreeNode;
 
-        foreach (var location in nodeLocation)
+        foreach (var location in nodeLocation.Path)
         {
             // Is this location a perfect match?
             if (currentNodeCollection.Count > location.Index &&
@@ -162,12 +169,12 @@ public partial class MainForm : Form
         MainTree.SelectedNode = currentNode;
     }
 
-    private IEnumerable<(int Index, string Name)> GetNearestParentFolderLocation(
-        IEnumerable<(int Index, string Name)> startingLocation)
+    private Location GetNearestParentFolderLocation(
+        Location startingLocation)
     {
         var location = startingLocation;
         while (ShortcutData.Instance.GetItem(location) is ShortcutItem)
-            location = location.SkipLast(1);
+            location = location.ParentPath;
 
         return location;
     }
