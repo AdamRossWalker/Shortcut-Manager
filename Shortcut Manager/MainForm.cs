@@ -50,6 +50,23 @@ public partial class MainForm : Form
     private bool isTreeRefreshing = false;
     private void RefreshTree()
     {
+        void AddShortcutsToTree(
+            TreeNode? parent,
+            IEnumerable<IShortcutOrFolder> elements)
+        {
+            var container = parent?.Nodes ?? MainTree.Nodes;
+
+            foreach (var element in elements)
+            {
+                var node = new TreeNode(element.Name);
+
+                if (element is ShortcutFolder folder)
+                    AddShortcutsToTree(node, folder.Children);
+
+                container.Add(node);
+            }
+        }
+
         if (isTreeRefreshing)
             return;
         
@@ -78,41 +95,26 @@ public partial class MainForm : Form
         SelectBestNodeFrom(selectedLocation);
     }
 
-    private void AddShortcutsToTree(
-        TreeNode? parent,
-        IEnumerable<IShortcutOrFolder> elements)
+    private Location SelectedLocation()
     {
-        var container = parent?.Nodes ?? MainTree.Nodes;
-
-        foreach (var element in elements)
+        static IEnumerable<ChildLocation> LocationOf(TreeNode? node)
         {
-            var node = new TreeNode(element.Name);
+            if (node is null)
+                yield break;
 
-            if (element is ShortcutFolder folder)
-                AddShortcutsToTree(node, folder.Children);
+            foreach (var parentNodes in LocationOf(node.Parent))
+                yield return parentNodes;
 
-            container.Add(node);
+            yield return new() 
+            { 
+                Index = node.Index, 
+                Name = node.Text ,
+            };
         }
-    }
 
-    private Location SelectedLocation() =>
-        new() 
-        { 
+        return new()
+        {
             Path = LocationOf(MainTree.SelectedNode),
-        };
-
-    private static IEnumerable<ChildLocation> LocationOf(TreeNode? node)
-    {
-        if (node is null)
-            yield break;
-
-        foreach (var parentNodes in LocationOf(node.Parent))
-            yield return parentNodes;
-
-        yield return new() 
-        { 
-            Index = node.Index, 
-            Name = node.Text ,
         };
     }
 
@@ -169,7 +171,7 @@ public partial class MainForm : Form
         MainTree.SelectedNode = currentNode;
     }
 
-    private Location GetNearestParentFolderLocation(
+    private static Location GetNearestParentFolderLocation(
         Location startingLocation)
     {
         var location = startingLocation;

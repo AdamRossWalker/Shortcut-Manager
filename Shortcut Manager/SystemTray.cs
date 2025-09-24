@@ -82,51 +82,52 @@ public sealed class SystemTray : ApplicationContext
 
     private void RefreshShortcutsContextMenu()
     {
+        static bool AddFolder(
+            ToolStripItemCollection parentMenuItem,
+            ShortcutFolder shortcutFolder)
+        {
+            var hasAddedItems = false;
+
+            foreach (var sourceItem in shortcutFolder.Children)
+            {
+                var shouldAddThisMenuItem = false;
+
+                var menuItem = new ToolStripMenuItem()
+                {
+                    Text = sourceItem.Name,
+                    Image = sourceItem.Icon?.ToBitmap(),
+                };
+
+                if (sourceItem is ShortcutItem shortcut)
+                {
+                    menuItem.Click += (sender, eventArguments) => shortcut.Execute();
+                    menuItem.ToolTipText = shortcut.ToolTip;
+                    shouldAddThisMenuItem = true;
+                }
+
+                if (sourceItem is ShortcutFolder folder)
+                    shouldAddThisMenuItem = AddFolder(menuItem.DropDownItems, folder);
+
+                if (shouldAddThisMenuItem)
+                {
+                    parentMenuItem.Add(menuItem);
+                    hasAddedItems = true;
+                }
+            }
+
+            return hasAddedItems;
+        }
+
         if (currentShortcutDataVersion == ShortcutData.Instance.DataVersion)
             return;
 
         shortcutsContextMenu.Items.Clear();
 
-        AddFolderMenuItems(
+        AddFolder(
             shortcutsContextMenu.Items,
             ShortcutData.Instance.Root);
 
         currentShortcutDataVersion = ShortcutData.Instance.DataVersion;
     }
 
-    private static bool AddFolderMenuItems(
-        ToolStripItemCollection parentMenuItem,
-        ShortcutFolder shortcutFolder)
-    {
-        var hasAddedItems = false;
-
-        foreach (var sourceItem in shortcutFolder.Children)
-        {
-            var shouldAddThisMenuItem = false;
-
-            var menuItem = new ToolStripMenuItem()
-            {
-                Text = sourceItem.Name,
-                Image = sourceItem.Icon?.ToBitmap(),
-            };
-
-            if (sourceItem is ShortcutItem shortcut)
-            {
-                menuItem.Click += (sender, eventArguments) => shortcut.Execute();
-                menuItem.ToolTipText = shortcut.ToolTip;
-                shouldAddThisMenuItem = true;
-            }
-
-            if (sourceItem is ShortcutFolder folder)
-                shouldAddThisMenuItem = AddFolderMenuItems(menuItem.DropDownItems, folder);
-
-            if (shouldAddThisMenuItem)
-            {
-                parentMenuItem.Add(menuItem);
-                hasAddedItems = true;
-            }
-        }
-
-        return hasAddedItems;
-    }
 }
