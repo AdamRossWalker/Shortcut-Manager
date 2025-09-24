@@ -55,6 +55,7 @@
             StartInLabel = new Label();
             StartInTextBox = new TextBox();
             StartInBrowseButton = new Button();
+            ExecuteShortcutButton = new Button();
             BrowseFileDialog = new OpenFileDialog();
             BrowseFolderDialog = new FolderBrowserDialog();
             MainTreeeMenuStrip.SuspendLayout();
@@ -70,10 +71,11 @@
             MainTree.HideSelection = false;
             MainTree.Location = new Point(3, 37);
             MainTree.Name = "MainTree";
-            MainTableLayoutPanel.SetRowSpan(MainTree, 8);
+            MainTableLayoutPanel.SetRowSpan(MainTree, 9);
             MainTree.Size = new Size(320, 410);
             MainTree.TabIndex = 0;
             MainTree.AfterSelect += MainTree_AfterSelect;
+            MainTree.KeyDown += MainTree_KeyDown;
             // 
             // MainTreeeMenuStrip
             // 
@@ -127,10 +129,11 @@
             MainTableLayoutPanel.Controls.Add(StartInLabel, 1, 6);
             MainTableLayoutPanel.Controls.Add(StartInTextBox, 2, 6);
             MainTableLayoutPanel.Controls.Add(StartInBrowseButton, 3, 6);
+            MainTableLayoutPanel.Controls.Add(ExecuteShortcutButton, 2, 8);
             MainTableLayoutPanel.Dock = DockStyle.Fill;
             MainTableLayoutPanel.Location = new Point(0, 0);
             MainTableLayoutPanel.Name = "MainTableLayoutPanel";
-            MainTableLayoutPanel.RowCount = 9;
+            MainTableLayoutPanel.RowCount = 10;
             MainTableLayoutPanel.RowStyles.Add(new RowStyle());
             MainTableLayoutPanel.RowStyles.Add(new RowStyle());
             MainTableLayoutPanel.RowStyles.Add(new RowStyle());
@@ -139,6 +142,7 @@
             MainTableLayoutPanel.RowStyles.Add(new RowStyle());
             MainTableLayoutPanel.RowStyles.Add(new RowStyle());
             MainTableLayoutPanel.RowStyles.Add(new RowStyle());
+            MainTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
             MainTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             MainTableLayoutPanel.Size = new Size(800, 450);
             MainTableLayoutPanel.TabIndex = 0;
@@ -342,6 +346,19 @@
             StartInBrowseButton.UseVisualStyleBackColor = true;
             StartInBrowseButton.Click += StartInBrowseButton_Click;
             // 
+            // ExecuteShortcutButton
+            // 
+            ExecuteShortcutButton.AutoSize = true;
+            ExecuteShortcutButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            ExecuteShortcutButton.Dock = DockStyle.Fill;
+            ExecuteShortcutButton.Location = new Point(435, 348);
+            ExecuteShortcutButton.Name = "ExecuteShortcutButton";
+            ExecuteShortcutButton.Size = new Size(321, 44);
+            ExecuteShortcutButton.TabIndex = 15;
+            ExecuteShortcutButton.Text = "Execute";
+            ExecuteShortcutButton.UseVisualStyleBackColor = true;
+            ExecuteShortcutButton.Click += ExecuteShortcutButton_Click;
+            // 
             // BrowseFileDialog
             // 
             BrowseFileDialog.DefaultExt = "exe";
@@ -394,5 +411,6 @@
         private TextBox StartInTextBox;
         private Button StartInBrowseButton;
         private FolderBrowserDialog BrowseFolderDialog;
+        private Button ExecuteShortcutButton;
     }
 }

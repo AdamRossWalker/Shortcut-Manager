@@ -9,7 +9,7 @@ public partial class MainForm : Form
     public MainForm()
     {
         InitializeComponent();
-        
+
         AddTextBoxBinding(ShortcutNameTextBox, nameof(ViewModel.ShortcutName));
         AddTextBoxBinding(TargetPathTextBox, nameof(ViewModel.TargetPath));
         AddTextBoxBinding(ArgumentsTextBox, nameof(ViewModel.Arguments));
@@ -27,7 +27,7 @@ public partial class MainForm : Form
         };
     }
 
-    private void AddTextBoxBinding(TextBox textBox, string propertyName) => 
+    private void AddTextBoxBinding(TextBox textBox, string propertyName) =>
         textBox.DataBindings.Add(
             nameof(TextBox.Text),
             viewModel,
@@ -69,7 +69,7 @@ public partial class MainForm : Form
 
         if (isTreeRefreshing)
             return;
-        
+
         var selectedLocation = SelectedLocation();
 
         isTreeRefreshing = true;
@@ -105,10 +105,10 @@ public partial class MainForm : Form
             foreach (var parentNodes in LocationOf(node.Parent))
                 yield return parentNodes;
 
-            yield return new() 
-            { 
-                Index = node.Index, 
-                Name = node.Text ,
+            yield return new()
+            {
+                Index = node.Index,
+                Name = node.Text,
             };
         }
 
@@ -135,7 +135,7 @@ public partial class MainForm : Form
             }
 
             // Find other nodes that have the same name, then pick the nearest of those.
-            var nearestNodeMatchingName = 
+            var nearestNodeMatchingName =
                 currentNodeCollection
                 .Cast<TreeNode>()
                 .Where(n => n.Name == location.Name)
@@ -212,15 +212,15 @@ public partial class MainForm : Form
         RefreshTree();
     }
 
-    private void DeleteButton_Click(object sender, EventArgs e)
+    private void DeleteButton_Click(object? sender = null, EventArgs? e = null)
     {
         ShortcutData.Instance.DeleteItem(
             SelectedLocation());
-        
+
         RefreshTree();
     }
 
-    private void MainTree_AfterSelect(object sender, TreeViewEventArgs e) => 
+    private void MainTree_AfterSelect(object sender, TreeViewEventArgs e) =>
         RefreshSelectedShortcut();
 
     private void RefreshSelectedShortcut()
@@ -231,7 +231,7 @@ public partial class MainForm : Form
         var location = SelectedLocation();
         var item = ShortcutData.Instance.GetItem(location);
         var shortcut = item as ShortcutItem;
-        
+
         var isFolder = item is ShortcutFolder;
         var isShortcut = shortcut is not null;
         var isEither = isFolder | isShortcut;
@@ -266,7 +266,7 @@ public partial class MainForm : Form
             // For some crazy reason setting all the controls to invisible doesn't shrink the row to zero, 
             // So I'm doing it manually.
             var shortcutRowSizeType = isShortcut ? SizeType.AutoSize : SizeType.Absolute;
-            
+
             MainTableLayoutPanel.RowStyles[4].SizeType = shortcutRowSizeType;
             MainTableLayoutPanel.RowStyles[5].SizeType = shortcutRowSizeType;
             MainTableLayoutPanel.RowStyles[6].SizeType = shortcutRowSizeType;
@@ -320,5 +320,32 @@ public partial class MainForm : Form
             return;
 
         viewModel.StartInPath = BrowseFolderDialog.SelectedPath;
+    }
+
+    private void MainTree_KeyDown(object sender, KeyEventArgs e)
+    {
+        var selectedItem = SelectedLocation();
+        if (!selectedItem.Path.Any())
+            return;
+
+        switch (e.KeyCode)
+        {
+            case Keys.Delete:
+                DeleteButton_Click();
+                return;
+
+            case Keys.F2:
+                ShortcutNameTextBox.Focus();
+                ShortcutNameTextBox.SelectAll();
+                return;
+        }
+    }
+
+    private void ExecuteShortcutButton_Click(object sender, EventArgs e)
+    {
+        if (viewModel.CurrentItem is not ShortcutItem shortcut)
+            return;
+
+        shortcut.Execute();
     }
 }

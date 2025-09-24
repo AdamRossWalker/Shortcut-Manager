@@ -32,13 +32,7 @@ public sealed class ViewModel : ObservableObject
     public IShortcutOrFolder? CurrentItem
     {
         get => currentItem;
-        set
-        {
-            if (!SetFieldWithoutNotification(ref currentItem, value))
-                return;
-
-            RaisePropertyChanged();
-        }
+        set => SetField(ref currentItem, value);
     }
 
     public Location SelectedNodeLocation
@@ -57,14 +51,18 @@ public sealed class ViewModel : ObservableObject
                 return;
 
             if (CurrentItem is not null)
+            {
+                CurrentItem = CurrentItem switch
+                {
+                    ShortcutFolder folder => folder with { Name = value },
+                    ShortcutItem shortcut => shortcut with { Name = value },
+                    _ => CurrentItem,
+                };
+
                 ShortcutData.Instance.ReplaceItem(
                     selectedNodeLocation,
-                    CurrentItem switch
-                    {
-                        ShortcutFolder folder => folder with { Name = value },
-                        ShortcutItem shortcut => shortcut with { Name = value },
-                        _ => CurrentItem,
-                    });
+                    CurrentItem);
+            }
 
             RaisePropertyChanged();
         }
@@ -80,14 +78,18 @@ public sealed class ViewModel : ObservableObject
                 return;
 
             if (CurrentItem is not null)
+            {
+                CurrentItem = CurrentItem switch
+                {
+                    ShortcutFolder folder => folder with { Icon = value },
+                    ShortcutItem shortcut => shortcut with { Icon = value },
+                    _ => CurrentItem,
+                };
+
                 ShortcutData.Instance.ReplaceItem(
                     selectedNodeLocation,
-                    CurrentItem switch
-                    {
-                        ShortcutFolder folder => folder with { Icon = value },
-                        ShortcutItem shortcut => shortcut with { Icon = value },
-                        _ => CurrentItem,
-                    });
+                    CurrentItem);
+            }
 
             SetField(ref shortcutBitmap, shortcutIcon?.ToBitmap(), nameof(ShortcutBitmap));
             RaisePropertyChanged();
@@ -110,9 +112,11 @@ public sealed class ViewModel : ObservableObject
 
             if (CurrentItem is ShortcutItem item)
             {
+                CurrentItem = item with { TargetPath = value };
+
                 ShortcutData.Instance.ReplaceItem(
                     selectedNodeLocation,
-                    item with { TargetPath = value });
+                    CurrentItem);
 
                 if (value is not null)
                 {
@@ -147,9 +151,13 @@ public sealed class ViewModel : ObservableObject
                 return;
 
             if (CurrentItem is ShortcutItem item)
+            {
+                CurrentItem = item with { Arguments = value };
+
                 ShortcutData.Instance.ReplaceItem(
                     selectedNodeLocation,
-                    item with { Arguments = value });
+                    CurrentItem);
+            }
 
             RaisePropertyChanged();
         }
@@ -165,9 +173,13 @@ public sealed class ViewModel : ObservableObject
                 return;
 
             if (CurrentItem is ShortcutItem item)
+            {
+                CurrentItem = item with { StartInPath = value };
+
                 ShortcutData.Instance.ReplaceItem(
                     selectedNodeLocation,
-                    item with { StartInPath = value });
+                    CurrentItem);
+            }
 
             RaisePropertyChanged();
         }
@@ -183,9 +195,13 @@ public sealed class ViewModel : ObservableObject
                 return;
 
             if (CurrentItem is ShortcutItem item)
+            {
+                CurrentItem = item with { ToolTip = value };
+
                 ShortcutData.Instance.ReplaceItem(
                     selectedNodeLocation,
-                    item with { ToolTip = value });
+                    CurrentItem);
+            }
 
             RaisePropertyChanged();
         }
