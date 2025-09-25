@@ -8,7 +8,7 @@ public sealed record ShortcutFolder : IShortcutOrFolder
     public required string? Name { get; init; }
 
     [JsonConverter(typeof(JsonIconConverter))]
-    public Icon? Icon { get; init; } = Resources.Folder.ToIcon();
+    public Icon? Icon { get; init; } = Resources.Folder;
 
     public required IEnumerable<IShortcutOrFolder> Children { get; init; }
 }
