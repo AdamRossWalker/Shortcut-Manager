@@ -12,6 +12,8 @@ public partial class MainForm : Form
     {
         InitializeComponent();
 
+        SetDoubleBuffered(this);
+
         AddTextBoxBinding(ShortcutNameTextBox, nameof(ViewModel.ShortcutName));
         AddTextBoxBinding(TargetPathTextBox, nameof(ViewModel.TargetPath));
         AddTextBoxBinding(ArgumentsTextBox, nameof(ViewModel.Arguments));
@@ -30,6 +32,26 @@ public partial class MainForm : Form
         };
     }
 
+    // From https://stackoverflow.com/a/77233
+    public static void SetDoubleBuffered(Control control)
+    {
+        // Taxes: Remote Desktop Connection and painting
+        // http://blogs.msdn.com/oldnewthing/archive/2006/01/03/508694.aspx
+        if (SystemInformation.TerminalServerSession)
+            return;
+
+        var property =
+            typeof(Control).GetProperty(
+                "DoubleBuffered",
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Instance);
+
+        property?.SetValue(control, value: true, null);
+
+        foreach (var child in control.Controls.Cast<Control>())
+            SetDoubleBuffered(child);
+    }
+
     private int treeLockCount = 0;
 
     private sealed class LockTreeRefresh : IDisposable
@@ -39,10 +61,19 @@ public partial class MainForm : Form
         public LockTreeRefresh(MainForm mainForm)
         {
             owner = mainForm;
+
+            if (owner.treeLockCount == 0)
+                DrawingControl.SuspendDrawing(owner);
+
             owner.treeLockCount++;
         }
 
-        public void Dispose() => owner.treeLockCount--;
+        public void Dispose()
+        {
+            owner.treeLockCount--;
+            if (owner.treeLockCount == 0)
+                DrawingControl.ResumeDrawing(owner);
+        }
     }
 
     private LockTreeRefresh SuppressTreeRefresh() => new(this);
