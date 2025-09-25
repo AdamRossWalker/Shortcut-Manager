@@ -30,6 +30,23 @@ public partial class MainForm : Form
         };
     }
 
+    private int treeLockCount = 0;
+
+    private sealed class LockTreeRefresh : IDisposable
+    {
+        private readonly MainForm owner;
+
+        public LockTreeRefresh(MainForm mainForm)
+        {
+            owner = mainForm;
+            owner.treeLockCount++;
+        }
+
+        public void Dispose() => owner.treeLockCount--;
+    }
+
+    private LockTreeRefresh SuppressTreeRefresh() => new(this);
+
     private void AddTextBoxBinding(TextBox textBox, string propertyName) =>
         textBox.DataBindings.Add(
             nameof(TextBox.Text),
@@ -50,7 +67,6 @@ public partial class MainForm : Form
         base.OnClosed(e);
     }
 
-    private bool isTreeRefreshing = false;
     private void RefreshTree()
     {
         void AddShortcutsToTree(
@@ -78,33 +94,27 @@ public partial class MainForm : Form
             }
         }
 
-        if (isTreeRefreshing)
+        if (treeLockCount > 0)
             return;
 
         var selectedLocation = SelectedLocation();
 
-        isTreeRefreshing = true;
+        using var _ = SuppressTreeRefresh();
+
+        MainTree.SuspendLayout();
         try
         {
-            MainTree.SuspendLayout();
-            try
-            {
-                MainTree.Nodes.Clear();
-                MainTree.ImageList ??= new ImageList();
-                MainTree.ImageList.Images.Clear();
-                MainTree.ImageList.Images.Add(Resources.MissingIcon);
+            MainTree.Nodes.Clear();
+            MainTree.ImageList ??= new ImageList();
+            MainTree.ImageList.Images.Clear();
+            MainTree.ImageList.Images.Add(Resources.MissingIcon);
 
-                AddShortcutsToTree(parent: null, ShortcutData.Instance.Root.Children);
-                MainTree.ExpandAll();
-            }
-            finally
-            {
-                MainTree.ResumeLayout();
-            }
+            AddShortcutsToTree(parent: null, ShortcutData.Instance.Root.Children);
+            MainTree.ExpandAll();
         }
         finally
         {
-            isTreeRefreshing = false;
+            MainTree.ResumeLayout();
         }
 
         SelectBestNodeFrom(selectedLocation);
@@ -234,14 +244,14 @@ public partial class MainForm : Form
         RefreshTree();
     }
 
-    private void MainTree_AfterSelect(object sender, TreeViewEventArgs e) =>
+    private void MainTree_AfterSelect(object sender, TreeViewEventArgs e)
+    {
+        using var _ = SuppressTreeRefresh();
         RefreshSelectedShortcut();
+    }
 
     private void RefreshSelectedShortcut()
     {
-        if (isTreeRefreshing)
-            return;
-
         var location = SelectedLocation();
         var item = ShortcutData.Instance.GetItem(location);
         var shortcut = item as ShortcutItem;
