@@ -319,6 +319,11 @@ public partial class MainForm : Form
     {
         using var _ = SuppressTreeRefresh();
         RefreshSelectedShortcut();
+
+        var node = MainTree.SelectedNode;
+
+        if (node?.Nodes.Count > 0)
+            node.Expand();
     }
 
     private void RefreshSelectedShortcut()
