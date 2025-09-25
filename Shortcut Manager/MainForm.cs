@@ -128,6 +128,7 @@ public partial class MainForm : Form
         if (treeLockCount > 0)
             return;
 
+        // Try to preserve the selected node during the refresh.
         var selectedLocation = SelectedLocation();
 
         using var _ = SuppressTreeRefresh();
@@ -135,13 +136,28 @@ public partial class MainForm : Form
         MainTree.SuspendLayout();
         try
         {
+            // Try to preserve any collapsed/expanded tree states during the refresh.
+            var oldFolderStates = GetFolderStates();
+
             MainTree.Nodes.Clear();
             MainTree.ImageList ??= new ImageList();
             MainTree.ImageList.Images.Clear();
             MainTree.ImageList.Images.Add(Resources.MissingIcon);
 
             AddShortcutsToTree(parent: null, ShortcutData.Instance.Root.Children);
-            MainTree.ExpandAll();
+
+            foreach (var oldFolderState in oldFolderStates)
+            {
+                var node = GetBestNodeFrom(oldFolderState.Location);
+                if (node is null)
+                    continue;
+
+                if (node.Nodes.Count == 0)
+                    continue;
+
+                if (oldFolderState.IsExpanded)
+                    node.Expand();
+            }
         }
         finally
         {
@@ -151,14 +167,33 @@ public partial class MainForm : Form
         SelectBestNodeFrom(selectedLocation);
     }
 
-    private Location SelectedLocation()
+    private IEnumerable<(Location Location, bool IsExpanded)> GetFolderStates()
     {
-        static IEnumerable<ChildLocation> LocationOf(TreeNode? node)
+        static IEnumerable<(Location Location, bool IsExpanded)> ChildFolderStates(TreeNodeCollection nodes)
+        {
+            foreach (var node in nodes.Cast<TreeNode>())
+            {
+                if (node.Nodes.Count == 0)
+                    continue;
+
+                yield return (GetLocationOf(node), node.IsExpanded);
+
+                foreach (var childState in ChildFolderStates(node.Nodes))
+                    yield return childState;
+            }
+        }
+
+        return [.. ChildFolderStates(MainTree.Nodes)];
+    }
+
+    private static Location GetLocationOf(TreeNode? node)
+    {
+        static IEnumerable<ChildLocation> PathTo(TreeNode? node)
         {
             if (node is null)
                 yield break;
 
-            foreach (var parentNodes in LocationOf(node.Parent))
+            foreach (var parentNodes in PathTo(node.Parent))
                 yield return parentNodes;
 
             yield return new()
@@ -170,11 +205,16 @@ public partial class MainForm : Form
 
         return new()
         {
-            Path = LocationOf(MainTree.SelectedNode),
+            Path = [.. PathTo(node)],
         };
     }
 
-    private void SelectBestNodeFrom(Location nodeLocation)
+    private Location SelectedLocation() => GetLocationOf(MainTree.SelectedNode);
+
+    private void SelectBestNodeFrom(Location location) =>
+        MainTree.SelectedNode = GetBestNodeFrom(location);
+
+    private TreeNode? GetBestNodeFrom(Location nodeLocation)
     {
         var currentNodeCollection = MainTree.Nodes;
         var currentNode = null as TreeNode;
@@ -224,7 +264,7 @@ public partial class MainForm : Form
             break;
         }
 
-        MainTree.SelectedNode = currentNode;
+        return currentNode;
     }
 
     private static Location GetNearestParentFolderLocation(
