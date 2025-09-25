@@ -15,12 +15,21 @@ public sealed class UndoRedoManager
 
     public event ApplyNewShortcutTreeEventHandler? ApplyNewShortcutTree;
 
-    public IEnumerable<Frame> UndoFrames => history.Take(currentFrameIndex).Reverse();
+    public IEnumerable<Frame> UndoFrames => history.Skip(1).Take(currentFrameIndex).Reverse().Take(10);
 
     public IEnumerable<Frame> RedoFrames => history.Skip(currentFrameIndex + 1);
 
     public void AddFrame(Change change, ShortcutFolder newRoot)
     {
+        void TrimLaterHistory()
+        {
+            var firstInvalidIndex = currentFrameIndex + 1;
+            if (firstInvalidIndex >= history.Count)
+                return;
+
+            history.RemoveRange(firstInvalidIndex, history.Count - firstInvalidIndex);
+        }
+
         // If we are editing text, we want to replace the last node, 
         // not add to it.
         if (currentFrameIndex >= 0 && currentFrameIndex < history.Count)
@@ -37,18 +46,15 @@ public sealed class UndoRedoManager
                     Index = currentFrameIndex,
                     Root = newRoot,
                 };
-        
-                if (currentFrameIndex + 1 < history.Count)
-                    history.RemoveRange(currentFrameIndex + 1, history.Count - currentFrameIndex - 1);
 
+                TrimLaterHistory();
                 ApplyNewShortcutTree?.Invoke(newRoot);
                 return;
             }
         }
 
+        TrimLaterHistory();
         currentFrameIndex++;
-        if (currentFrameIndex < history.Count)
-            history.RemoveRange(currentFrameIndex, history.Count - currentFrameIndex);
 
         history.Add(new()
         {
@@ -80,12 +86,9 @@ public sealed class UndoRedoManager
         return true;
     }
 
-    public bool SetFrame(Frame target)
+    public bool SetFrameIndex(int newIndex)
     {
-        var newIndex = target.Index;
-
-        if (newIndex >= history.Count ||
-            target != history[newIndex])
+        if (newIndex >= history.Count)
             return false;
 
         currentFrameIndex = newIndex;

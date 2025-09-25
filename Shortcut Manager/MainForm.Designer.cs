@@ -165,6 +165,7 @@
             // 
             // AddShortcutButton
             // 
+            AddShortcutButton.AutoToolTip = false;
             AddShortcutButton.Image = Properties.Resources.Add;
             AddShortcutButton.ImageTransparentColor = Color.Magenta;
             AddShortcutButton.Name = "AddShortcutButton";
@@ -174,6 +175,7 @@
             // 
             // AddFolderButton
             // 
+            AddFolderButton.AutoToolTip = false;
             AddFolderButton.Image = Properties.Resources.Add;
             AddFolderButton.ImageTransparentColor = Color.Magenta;
             AddFolderButton.Name = "AddFolderButton";
@@ -183,6 +185,7 @@
             // 
             // DeleteButton
             // 
+            DeleteButton.AutoToolTip = false;
             DeleteButton.Image = Properties.Resources.Delete;
             DeleteButton.ImageTransparentColor = Color.Magenta;
             DeleteButton.Name = "DeleteButton";
@@ -192,6 +195,7 @@
             // 
             // UndoButton
             // 
+            UndoButton.AutoToolTip = false;
             UndoButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
             UndoButton.Image = Properties.Resources.Undo;
             UndoButton.ImageTransparentColor = Color.Magenta;
@@ -203,6 +207,7 @@
             // 
             // RedoButton
             // 
+            RedoButton.AutoToolTip = false;
             RedoButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
             RedoButton.Image = Properties.Resources.Redo;
             RedoButton.ImageTransparentColor = Color.Magenta;

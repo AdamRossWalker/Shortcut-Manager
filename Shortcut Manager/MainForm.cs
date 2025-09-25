@@ -22,7 +22,8 @@ public partial class MainForm : Form
 
         viewModel.PropertyChanged += (sender, property) =>
         {
-            if (property.PropertyName != nameof(ViewModel.ShortcutName))
+            if (property.PropertyName != nameof(ViewModel.ShortcutName) &&
+                property.PropertyName != nameof(ViewModel.ShortcutIcon))
                 return;
 
             RefreshTree();
@@ -384,7 +385,7 @@ public partial class MainForm : Form
                 Resources.Undo,
                 (sender, eventArguments) =>
                 {
-                    if (UndoRedoManager.Instance.SetFrame(frame))
+                    if (UndoRedoManager.Instance.SetFrameIndex(frame.Index - 1))
                         RefreshTree();
                 });
     }
@@ -399,7 +400,7 @@ public partial class MainForm : Form
                 Resources.Redo,
                 (sender, eventArguments) =>
                 {
-                    if (UndoRedoManager.Instance.SetFrame(frame))
+                    if (UndoRedoManager.Instance.SetFrameIndex(frame.Index))
                         RefreshTree();
                 });
     }
