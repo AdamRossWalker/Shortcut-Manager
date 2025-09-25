@@ -4,7 +4,7 @@ namespace ShortcutManager.UndoRedo;
 
 public sealed record Frame
 {
-    public required string Name { get; init; }
+    public required Change Change { get; init; }
 
     public required int Index{ get; init; }
 

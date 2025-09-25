@@ -380,7 +380,7 @@ public partial class MainForm : Form
 
         foreach (var frame in UndoRedoManager.Instance.UndoFrames)
             UndoButton.DropDownItems.Add(
-                frame.Name,
+                frame.Change.Description,
                 Resources.Undo,
                 (sender, eventArguments) =>
                 {
@@ -395,7 +395,7 @@ public partial class MainForm : Form
 
         foreach (var frame in UndoRedoManager.Instance.RedoFrames)
             RedoButton.DropDownItems.Add(
-                frame.Name,
+                frame.Change.Description,
                 Resources.Redo,
                 (sender, eventArguments) =>
                 {

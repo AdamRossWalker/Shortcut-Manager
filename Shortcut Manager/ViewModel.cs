@@ -52,6 +52,8 @@ public sealed class ViewModel : ObservableObject
 
             if (CurrentItem is not null && CurrentItem.Name != value)
             {
+                var oldItem = CurrentItem;
+
                 CurrentItem = CurrentItem switch
                 {
                     ShortcutFolder folder => folder with { Name = value },
@@ -61,6 +63,8 @@ public sealed class ViewModel : ObservableObject
 
                 ShortcutData.Instance.ReplaceItem(
                     selectedNodeLocation,
+                    "Name",
+                    oldItem,
                     CurrentItem);
             }
 
@@ -79,6 +83,8 @@ public sealed class ViewModel : ObservableObject
 
             if (CurrentItem is not null && CurrentItem.Icon != value)
             {
+                var oldItem = CurrentItem;
+
                 CurrentItem = CurrentItem switch
                 {
                     ShortcutFolder folder => folder with { Icon = value },
@@ -88,6 +94,8 @@ public sealed class ViewModel : ObservableObject
 
                 ShortcutData.Instance.ReplaceItem(
                     selectedNodeLocation,
+                    "Icon",
+                    oldItem,
                     CurrentItem);
             }
 
@@ -112,10 +120,14 @@ public sealed class ViewModel : ObservableObject
 
             if (CurrentItem is ShortcutItem item && item.TargetPath != value)
             {
+                var oldItem = CurrentItem;
+
                 CurrentItem = item with { TargetPath = value };
 
                 ShortcutData.Instance.ReplaceItem(
                     selectedNodeLocation,
+                    "Target Path",
+                    oldItem,
                     CurrentItem);
 
                 if (value is not null)
@@ -152,10 +164,14 @@ public sealed class ViewModel : ObservableObject
 
             if (CurrentItem is ShortcutItem item && item.Arguments != value)
             {
+                var oldItem = CurrentItem;
+
                 CurrentItem = item with { Arguments = value };
 
                 ShortcutData.Instance.ReplaceItem(
                     selectedNodeLocation,
+                    "Arguments",
+                    oldItem,
                     CurrentItem);
             }
 
@@ -174,10 +190,14 @@ public sealed class ViewModel : ObservableObject
 
             if (CurrentItem is ShortcutItem item && item.StartInPath != value)
             {
+                var oldItem = CurrentItem;
+
                 CurrentItem = item with { StartInPath = value };
 
                 ShortcutData.Instance.ReplaceItem(
                     selectedNodeLocation,
+                    "Start In Path",
+                    oldItem,
                     CurrentItem);
             }
 
@@ -196,10 +216,14 @@ public sealed class ViewModel : ObservableObject
 
             if (CurrentItem is ShortcutItem item && item.ToolTip != value)
             {
+                var oldItem = CurrentItem;
+
                 CurrentItem = item with { ToolTip = value };
 
                 ShortcutData.Instance.ReplaceItem(
                     selectedNodeLocation,
+                    "Tool Tip",
+                    oldItem,
                     CurrentItem);
             }
 

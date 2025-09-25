@@ -36,7 +36,7 @@ public sealed class ShortcutData
 
     private ShortcutData()
     {
-        var firstUndoRedoFrameName = "No Shortcuts";
+        var firstUndoRedoFrameDescription = "No Shortcuts";
 
         try
         {
@@ -45,11 +45,16 @@ public sealed class ShortcutData
                     File.ReadAllText(filename)) 
                 ?? Root;
 
-            firstUndoRedoFrameName = "Shortcuts Loaded";
+            firstUndoRedoFrameDescription = "Shortcuts Loaded";
         }
         catch (FileNotFoundException) { }
 
-        UndoRedoManager.Instance.AddFrame(firstUndoRedoFrameName, Root);
+        UndoRedoManager.Instance.AddFrame(
+            new()
+            { 
+                Description = firstUndoRedoFrameDescription,
+            }, 
+            Root);
         UndoRedoManager.Instance.ApplyNewShortcutTree += 
             newRoot => Root = newRoot;
     }
@@ -96,7 +101,10 @@ public sealed class ShortcutData
         IShortcutOrFolder newItem)
     =>
         CreateNewTree(
-            "Add",
+            new Change()
+            {
+                Description = "Add",
+            },
             location,
             oldItem =>
             {
@@ -113,10 +121,18 @@ public sealed class ShortcutData
 
     public void ReplaceItem(
         Location location,
+        string fieldName,
+        IShortcutOrFolder oldItem,
         IShortcutOrFolder newItem)
     =>
         CreateNewTree(
-            "Edit",
+            new Change()
+            { 
+                Description = "Edited " + fieldName,
+                IsMergable = true,
+                OldItem = oldItem,
+                NewItem = newItem,
+            },
             location,
             oldItem => newItem);
 
@@ -124,12 +140,15 @@ public sealed class ShortcutData
         Location location)
     =>
         CreateNewTree(
-            "Delete",
+            new Change()
+            {
+                Description = "Delete",
+            },
             location,
             oldItem => null);
 
     private void CreateNewTree(
-        string actionName,
+        Change change,
         Location location,
         Func<IShortcutOrFolder, IShortcutOrFolder?> createNewItemFrom)
     {
@@ -189,6 +208,6 @@ public sealed class ShortcutData
             location,
             createNewItemFrom)!;
 
-        UndoRedoManager.Instance.AddFrame(actionName, newTree);
+        UndoRedoManager.Instance.AddFrame(change, newTree);
     }
 }
