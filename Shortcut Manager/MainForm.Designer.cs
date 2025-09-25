@@ -96,7 +96,7 @@
             // 
             // MainTreeContextMenuAddFolderButton
             // 
-            MainTreeContextMenuAddFolderButton.Image = Properties.Resources.Add;
+            MainTreeContextMenuAddFolderButton.Image = Properties.Resources.Add_Folder;
             MainTreeContextMenuAddFolderButton.Name = "MainTreeContextMenuAddFolderButton";
             MainTreeContextMenuAddFolderButton.Size = new Size(198, 32);
             MainTreeContextMenuAddFolderButton.Text = "Add Folder";
@@ -176,7 +176,7 @@
             // AddFolderButton
             // 
             AddFolderButton.AutoToolTip = false;
-            AddFolderButton.Image = Properties.Resources.Add;
+            AddFolderButton.Image = Properties.Resources.Add_Folder;
             AddFolderButton.ImageTransparentColor = Color.Magenta;
             AddFolderButton.Name = "AddFolderButton";
             AddFolderButton.Size = new Size(129, 29);

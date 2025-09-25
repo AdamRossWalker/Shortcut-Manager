@@ -21,7 +21,7 @@ public partial class MainForm : Form
         AddTextBoxBinding(ToolTipTextBox, nameof(ViewModel.ToolTip));
 
         IconPictureBox.DataBindings.Add(nameof(PictureBox.Image), viewModel, nameof(ViewModel.ShortcutBitmap), true);
-
+        
         viewModel.PropertyChanged += (sender, property) =>
         {
             if (property.PropertyName != nameof(ViewModel.ShortcutName) &&
@@ -357,19 +357,6 @@ public partial class MainForm : Form
 
             DeleteButton.Visible = isEither;
             MainTreeContextMenuAddDeleteButton.Visible = isEither;
-
-            // For some crazy reason setting all the controls to invisible doesn't shrink the row to zero, 
-            // So I'm doing it manually.
-            var shortcutRowSizeType = isShortcut ? SizeType.AutoSize : SizeType.Absolute;
-
-            MainTableLayoutPanel.RowStyles[4].SizeType = shortcutRowSizeType;
-            MainTableLayoutPanel.RowStyles[5].SizeType = shortcutRowSizeType;
-            MainTableLayoutPanel.RowStyles[6].SizeType = shortcutRowSizeType;
-            MainTableLayoutPanel.RowStyles[7].SizeType = shortcutRowSizeType;
-            MainTableLayoutPanel.RowStyles[4].Height = 0;
-            MainTableLayoutPanel.RowStyles[5].Height = 0;
-            MainTableLayoutPanel.RowStyles[6].Height = 0;
-            MainTableLayoutPanel.RowStyles[7].Height = 0;
 
             viewModel.SetCurrentItem(location, item);
         }

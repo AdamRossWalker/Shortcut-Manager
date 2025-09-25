@@ -238,7 +238,8 @@ public sealed class ViewModel : ObservableObject
         var extension = Path.GetExtension(filename).ToUpper();
         if (extension == ".EXE" ||
             extension == ".COM" ||
-            extension == ".CMD")
+            extension == ".CMD" ||
+            extension == ".DLL")
         {
             newIcon = Icon.ExtractAssociatedIcon(filename);
         }
