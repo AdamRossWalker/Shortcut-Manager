@@ -21,7 +21,7 @@ public partial class MainForm : Form
         AddTextBoxBinding(ToolTipTextBox, nameof(ViewModel.ToolTip));
 
         IconPictureBox.DataBindings.Add(nameof(PictureBox.Image), viewModel, nameof(ViewModel.ShortcutBitmap), true);
-        
+
         viewModel.PropertyChanged += (sender, property) =>
         {
             if (property.PropertyName != nameof(ViewModel.ShortcutName) &&
@@ -453,14 +453,22 @@ public partial class MainForm : Form
         UndoButton.DropDownItems.Clear();
 
         foreach (var frame in UndoRedoManager.Instance.UndoFrames)
-            UndoButton.DropDownItems.Add(
-                frame.Change.Description,
-                Resources.Undo,
-                (sender, eventArguments) =>
-                {
-                    if (UndoRedoManager.Instance.SetFrameIndex(frame.Index - 1))
-                        RefreshTree();
-                });
+        {
+            var newButton = new ToolStripMenuItem
+            {
+                Text = frame.Change.Name,
+                Image = Resources.Undo,
+                ToolTipText = frame.Change.Description,
+            };
+
+            newButton.Click += (sender, eventArguments) =>
+            {
+                if (UndoRedoManager.Instance.SetFrameIndex(frame.Index - 1))
+                    RefreshTree();
+            };
+
+            UndoButton.DropDownItems.Add(newButton);
+        }
     }
 
     private void RedoButton_DropDownOpening(object sender, EventArgs e)
@@ -468,13 +476,65 @@ public partial class MainForm : Form
         RedoButton.DropDownItems.Clear();
 
         foreach (var frame in UndoRedoManager.Instance.RedoFrames)
-            RedoButton.DropDownItems.Add(
-                frame.Change.Description,
-                Resources.Redo,
-                (sender, eventArguments) =>
-                {
-                    if (UndoRedoManager.Instance.SetFrameIndex(frame.Index))
-                        RefreshTree();
-                });
+        {
+            var newButton = new ToolStripMenuItem
+            {
+                Text = frame.Change.Name,
+                Image = Resources.Redo,
+                ToolTipText = frame.Change.Description,
+            };
+
+            newButton.Click += (sender, eventArguments) =>
+            {
+                if (UndoRedoManager.Instance.SetFrameIndex(frame.Index))
+                    RefreshTree();
+            };
+
+            RedoButton.DropDownItems.Add(newButton);
+        }
+    }
+
+    private void MainTree_DragOver(object sender, DragEventArgs e)
+    {
+        var draggedNode = (TreeNode?)e.Data?.GetData(typeof(TreeNode));
+        if (draggedNode is null)
+            return;
+
+        e.Effect = e.AllowedEffect;
+        
+        var targetNode = MainTree.GetNodeAt(MainTree.PointToClient(new Point(e.X, e.Y)));
+        if (targetNode is null)
+            return;
+
+        if (draggedNode == targetNode)
+            return;
+
+        var draggedItemLocation = GetLocationOf(draggedNode);
+        var targetItemLocation = GetLocationOf(targetNode);
+
+        var draggedItem = ShortcutData.Instance.GetItem(draggedItemLocation);
+        var targetItem = ShortcutData.Instance.GetItem(targetItemLocation);
+
+        if (targetItem is ShortcutFolder targetFolder &&
+            targetFolder.Children.Any(childItem => ReferenceEquals(childItem, draggedItem)))
+            return;
+
+        var newLocation = ShortcutData.Instance.MoveItem(
+            draggedItemLocation,
+            targetItemLocation);
+
+        RefreshTree();
+        var newlyMovedNode = GetBestNodeFrom(newLocation);
+
+        MainTree.SelectedNode = newlyMovedNode;
+        e.Data!.SetData(typeof(TreeNode), newlyMovedNode);
+    }
+
+    private void MainTree_ItemDrag(object sender, ItemDragEventArgs e)
+    {
+        if (e.Item is not TreeNode node)
+            return;
+
+        DoDragDrop(node, DragDropEffects.Move);
     }
 }

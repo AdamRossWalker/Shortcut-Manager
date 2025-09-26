@@ -52,7 +52,8 @@ public sealed class ShortcutData
         UndoRedoManager.Instance.AddFrame(
             new()
             { 
-                Description = firstUndoRedoFrameDescription,
+                Name = firstUndoRedoFrameDescription,
+                Description = null,
             }, 
             Root);
         UndoRedoManager.Instance.ApplyNewShortcutTree += 
@@ -96,28 +97,63 @@ public sealed class ShortcutData
         return GetNextLevelIn(Root, location);
     }
 
+    public Location GetLocation(IShortcutOrFolder item, ShortcutFolder? root = null)
+    { 
+        bool GetLocation(
+            ShortcutFolder parent, 
+            List<ChildLocation> reversedPath)
+        {
+            foreach (var (child, index) in parent.Children.Select((child, index) => (child, index)))
+            {
+                if (ReferenceEquals(child, item) ||
+                    (child is ShortcutFolder folder && GetLocation(folder, reversedPath)))
+                {
+                    reversedPath.Add(new()
+                    {
+                        Index = index,
+                        Name = child.Name,
+                    });
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        var reversedPath = new List<ChildLocation>();
+        GetLocation(root ?? Root, reversedPath);
+        
+        return new()
+        {
+            Path = [.. Enumerable.Reverse(reversedPath)],
+        };
+    }
+
     public void AddItem(
         Location location,
         IShortcutOrFolder newItem)
     =>
-        CreateNewTree(
+        ApplyNewTree(
             new Change()
             {
-                Description = "Add",
+                Name = "Add",
+                Description = null,
             },
-            location,
-            oldItem =>
-            {
-                if (oldItem is not ShortcutFolder oldFolder)
-                    return oldItem;
-
-                return new ShortcutFolder
+            CreateNewTree(
+                location,
+                oldItem =>
                 {
-                    Name = oldFolder.Name,
-                    Icon = oldFolder.Icon,
-                    Children = [.. oldFolder.Children, newItem],
-                };
-            });
+                    if (oldItem is not ShortcutFolder oldFolder)
+                        return oldItem;
+
+                    return new ShortcutFolder
+                    {
+                        Name = oldFolder.Name,
+                        Icon = oldFolder.Icon,
+                        Children = [.. oldFolder.Children, newItem],
+                    };
+                }));
 
     public void ReplaceItem(
         Location location,
@@ -125,32 +161,121 @@ public sealed class ShortcutData
         IShortcutOrFolder oldItem,
         IShortcutOrFolder newItem)
     =>
-        CreateNewTree(
+        ApplyNewTree(
             new Change()
             { 
-                Description = "Edited " + fieldName,
+                Name = "Edited " + fieldName,
+                Description = null,
                 IsMergable = true,
                 OldItem = oldItem,
                 NewItem = newItem,
             },
-            location,
-            oldItem => newItem);
+            CreateNewTree(
+                location,
+                oldItem => newItem));
 
     public void DeleteItem(
         Location location)
     =>
-        CreateNewTree(
+        ApplyNewTree(
             new Change()
             {
-                Description = "Delete",
+                Name = "Delete",
+                Description = null
             },
-            location,
-            oldItem => null);
+            CreateNewTree(
+                location,
+                oldItem => null));
 
-    private void CreateNewTree(
-        Change change,
+    public Location MoveItem(
+        Location sourceLocation,
+        Location targetLocation)
+    {
+        if (!sourceLocation.Path.Any() ||
+            !targetLocation.Path.Any())
+            return sourceLocation;
+
+        if (Enumerable.SequenceEqual(
+            sourceLocation.ParentPath.Path,
+            targetLocation.ParentPath.Path) &&
+            sourceLocation.Path.Last().Index + 1 ==
+            targetLocation.Path.Last().Index)
+            return sourceLocation;
+
+        var movedItem = GetItem(sourceLocation);
+        var targetItem = GetItem(targetLocation);
+
+        if (ReferenceEquals(movedItem, targetItem)) 
+            return sourceLocation;
+
+        var targetAsFolder = targetItem as ShortcutFolder;
+        var isTargetAFolder = targetAsFolder is not null;
+
+        var tempTree = 
+            CreateNewTree(
+                sourceLocation,
+                oldItem => null);
+
+        // After the above delete, the target location may have now changed.
+        var adjustedTargetLocation = GetLocation(targetItem, tempTree);
+        if (!adjustedTargetLocation.Path.Any())
+            return sourceLocation;
+
+        var newIndex =
+            targetAsFolder?.Children.Count() 
+            ?? adjustedTargetLocation.Path.Last().Index;
+
+        tempTree =
+            CreateNewTree(
+                isTargetAFolder
+                    ? adjustedTargetLocation
+                    : adjustedTargetLocation.ParentPath,
+                oldItem =>
+                {
+                    if (oldItem is not ShortcutFolder oldFolder)
+                        return oldItem;
+
+                    return new ShortcutFolder
+                    {
+                        Name = oldFolder.Name,
+                        Icon = oldFolder.Icon,
+                        Children =
+                        [
+                            ..oldFolder.Children.Take(newIndex),
+                            movedItem,
+                            ..oldFolder.Children.Skip(newIndex),
+                        ],
+                    };
+                },
+                tempTree);
+
+        ApplyNewTree(
+            new Change()
+            {
+                Name = "Move",
+                Description = 
+                    String.Join('\\', sourceLocation.Path.Select(l => l.Name)) +
+                    " (" +
+                    sourceLocation.Path.Last().Index +
+                    ")" +
+                    " → " +
+                    String.Join('\\', adjustedTargetLocation.Path.Select(l => l.Name)) +
+                    " (" +
+                    adjustedTargetLocation.Path.Last().Index +
+                    ")",
+            },
+            tempTree);
+
+        return GetLocation(movedItem);
+    }
+
+    private static void ApplyNewTree(Change change, ShortcutFolder newTree) =>
+        UndoRedoManager.Instance.AddFrame(change, newTree);
+
+    private ShortcutFolder CreateNewTree(
         Location location,
-        Func<IShortcutOrFolder, IShortcutOrFolder?> createNewItemFrom)
+        Func<IShortcutOrFolder, IShortcutOrFolder?> createNewItemFrom,
+        ShortcutFolder? oldRoot = null)
     {
         static IShortcutOrFolder? CreateSubTree(
             IShortcutOrFolder oldItem,
@@ -203,11 +328,9 @@ public sealed class ShortcutData
             };
         }
 
-        var newTree = (ShortcutFolder)CreateSubTree(
-            Root,
+        return (ShortcutFolder)CreateSubTree(
+            oldRoot ?? Root,
             location,
             createNewItemFrom)!;
-
-        UndoRedoManager.Instance.AddFrame(change, newTree);
     }
 }

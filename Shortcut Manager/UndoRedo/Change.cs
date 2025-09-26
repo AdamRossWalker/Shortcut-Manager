@@ -4,7 +4,9 @@ namespace ShortcutManager.UndoRedo;
 
 public record Change
 {
-    public required string Description { get; init; }
+    public required string Name { get; init; }
+
+    public required string? Description { get; init; }
 
     public bool IsMergable { get; init; } = false;
 

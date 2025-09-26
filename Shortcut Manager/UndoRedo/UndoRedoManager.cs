@@ -37,7 +37,7 @@ public sealed class UndoRedoManager
             var previousChange = history[currentFrameIndex].Change;
         
             if (change.IsMergable && previousChange.IsMergable &&
-                change.Description == previousChange.Description &&
+                change.Name == previousChange.Name &&
                 ReferenceEquals(change.OldItem, previousChange.NewItem))
             {
                 history[currentFrameIndex] = new()

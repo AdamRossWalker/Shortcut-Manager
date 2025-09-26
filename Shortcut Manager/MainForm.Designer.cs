@@ -68,6 +68,7 @@
             // 
             // MainTree
             // 
+            MainTree.AllowDrop = true;
             MainTree.ContextMenuStrip = MainTreeeMenuStrip;
             MainTree.Dock = DockStyle.Fill;
             MainTree.HideSelection = false;
@@ -76,7 +77,9 @@
             MainTableLayoutPanel.SetRowSpan(MainTree, 9);
             MainTree.Size = new Size(320, 410);
             MainTree.TabIndex = 0;
+            MainTree.ItemDrag += MainTree_ItemDrag;
             MainTree.AfterSelect += MainTree_AfterSelect;
+            MainTree.DragOver += MainTree_DragOver;
             MainTree.KeyDown += MainTree_KeyDown;
             // 
             // MainTreeeMenuStrip
