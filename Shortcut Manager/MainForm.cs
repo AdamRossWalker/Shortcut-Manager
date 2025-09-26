@@ -454,7 +454,7 @@ public partial class MainForm : Form
     private void UndoButton_DropDownOpening(object sender, EventArgs e)
     {
         UndoButton.DropDownItems.Clear();
-
+        
         foreach (var frame in UndoRedoManager.Instance.UndoFrames)
         {
             var newButton = new ToolStripMenuItem

@@ -21,6 +21,7 @@ public static class Program
         {
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
+            Application.ThreadException += Application_ThreadException;
             ApplicationConfiguration.Initialize();
             Application.Run(new SystemTray());
         }
@@ -29,5 +30,22 @@ public static class Program
             mutex.ReleaseMutex();
             mutex.Dispose();
         }
+    }
+
+    private static void Application_ThreadException(object sender, ThreadExceptionEventArgs eventArguments)
+    { 
+        var exception = eventArguments.Exception;
+
+        var result = MessageBox.Show(
+            exception.Message + 
+                Environment.NewLine + 
+                Environment.NewLine + 
+                "Copy full error details to the clipboard?",
+            "Error", 
+            MessageBoxButtons.YesNo, 
+            MessageBoxIcon.Error );
+
+        if (result == DialogResult.Yes)
+            Clipboard.SetText(exception.ToString());
     }
 }
