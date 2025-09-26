@@ -1,4 +1,5 @@
 ﻿using ShortcutManager.Data;
+using ShortcutManager.UndoRedo;
 
 namespace ShortcutManager;
 
@@ -6,6 +7,14 @@ public sealed class ViewModel : ObservableObject
 {
     private Location selectedNodeLocation = Location.Empty;
     private IShortcutOrFolder? currentItem;
+
+    public ViewModel() =>
+        UndoRedoManager.Instance.UndoRedoStateChanged += 
+            (canUndo, canRedo) =>
+            {
+                CanUndo = canUndo;
+                CanRedo = canRedo;
+            };
 
     public void SetCurrentItem(
         Location selectedNodeLocation,
@@ -229,6 +238,20 @@ public sealed class ViewModel : ObservableObject
 
             RaisePropertyChanged();
         }
+    }
+
+    private bool canUndo;
+    public bool CanUndo
+    {
+        get => canUndo;
+        set => SetField(ref canUndo, value);
+    }
+
+    private bool canRedo;
+    public bool CanRedo
+    {
+        get => canRedo;
+        set => SetField(ref canRedo, value);
     }
 
     public void LoadIcon(string filename)

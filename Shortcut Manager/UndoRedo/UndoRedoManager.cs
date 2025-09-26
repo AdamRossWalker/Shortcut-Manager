@@ -15,6 +15,10 @@ public sealed class UndoRedoManager
 
     public event ApplyNewShortcutTreeEventHandler? ApplyNewShortcutTree;
 
+    public delegate void UndoRedoStateChangedEventHandler(bool canUndo, bool canRedo);
+
+    public event UndoRedoStateChangedEventHandler? UndoRedoStateChanged;
+
     public IEnumerable<Frame> UndoFrames => history.Skip(1).Take(currentFrameIndex).Reverse().Take(10);
 
     public IEnumerable<Frame> RedoFrames => history.Skip(currentFrameIndex + 1);
@@ -48,7 +52,7 @@ public sealed class UndoRedoManager
                 };
 
                 TrimLaterHistory();
-                ApplyNewShortcutTree?.Invoke(newRoot);
+                PublishNewShortcutTree();
                 return;
             }
         }
@@ -63,7 +67,7 @@ public sealed class UndoRedoManager
             Root = newRoot,
         });
 
-        ApplyNewShortcutTree?.Invoke(newRoot);
+        PublishNewShortcutTree();
     }
 
     public bool Undo()
@@ -72,7 +76,7 @@ public sealed class UndoRedoManager
             return false;
 
         currentFrameIndex--;
-        ApplyNewShortcutTree?.Invoke(history[currentFrameIndex].Root);
+        PublishNewShortcutTree();
         return true;
     }
 
@@ -82,7 +86,7 @@ public sealed class UndoRedoManager
             return false;
 
         currentFrameIndex++;
-        ApplyNewShortcutTree?.Invoke(history[currentFrameIndex].Root);
+        PublishNewShortcutTree();
         return true;
     }
 
@@ -92,7 +96,13 @@ public sealed class UndoRedoManager
             return false;
 
         currentFrameIndex = newIndex;
-        ApplyNewShortcutTree?.Invoke(history[currentFrameIndex].Root);
+        PublishNewShortcutTree();
         return true;
+    }
+
+    private void PublishNewShortcutTree()
+    {
+        ApplyNewShortcutTree?.Invoke(history[currentFrameIndex].Root);
+        UndoRedoStateChanged?.Invoke(UndoFrames.Any(), RedoFrames.Any());
     }
 }

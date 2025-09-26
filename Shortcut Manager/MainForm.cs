@@ -22,6 +22,9 @@ public partial class MainForm : Form
 
         IconPictureBox.DataBindings.Add(nameof(PictureBox.Image), viewModel, nameof(ViewModel.ShortcutBitmap), true);
 
+        UndoButton.DataBindings.Add(nameof(ToolStripSplitButton.Enabled), viewModel, nameof(ViewModel.CanUndo));
+        RedoButton.DataBindings.Add(nameof(ToolStripSplitButton.Enabled), viewModel, nameof(ViewModel.CanRedo));
+
         viewModel.PropertyChanged += (sender, property) =>
         {
             if (property.PropertyName != nameof(ViewModel.ShortcutName) &&
