@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using ShortcutManager.Data;
 using ShortcutManager.Properties;
 
@@ -9,13 +10,20 @@ namespace ShortcutManager;
 /// </summary>
 public sealed class SystemTray : ApplicationContext
 {
+    private readonly IServiceProvider serviceProvider;
+    private readonly IShortcutData shortcutData;
     private readonly NotifyIcon notifyIcon;
     private readonly ContextMenuStrip shortcutsContextMenu;
     private readonly ContextMenuStrip mainContextMenu;
     private int currentShortcutDataVersion = -1;
 
-    public SystemTray()
+    public SystemTray(
+        IServiceProvider serviceProvider,
+        IShortcutData shortcutData)
     {
+        this.serviceProvider = serviceProvider;
+        this.shortcutData = shortcutData;
+
         shortcutsContextMenu = new() 
         { 
             ShowItemToolTips = true,
@@ -42,7 +50,7 @@ public sealed class SystemTray : ApplicationContext
         notifyIcon.DoubleClick += Open;
 
         // If the user hasn't set us up yet, open the full window.
-        if (!ShortcutData.Instance.Root.Children.Any())
+        if (!shortcutData.Root.Children.Any())
             Open();
     }
 
@@ -72,8 +80,8 @@ public sealed class SystemTray : ApplicationContext
         showContextMenuMethod!.Invoke(notifyIcon, null);
     }
 
-    private void Open(object? sender = null, EventArgs? eventArgs = null) => 
-        new MainForm().Show();
+    private void Open(object? sender = null, EventArgs? eventArgs = null) =>
+        serviceProvider.GetRequiredService<MainForm>().Show();
 
     private void Exit(object? sender = null, EventArgs? eventArgs = null)
     {
@@ -119,16 +127,15 @@ public sealed class SystemTray : ApplicationContext
             return hasAddedItems;
         }
 
-        if (currentShortcutDataVersion == ShortcutData.Instance.DataVersion)
+        if (currentShortcutDataVersion == shortcutData.DataVersion)
             return;
 
         shortcutsContextMenu.Items.Clear();
 
         AddFolder(
             shortcutsContextMenu.Items,
-            ShortcutData.Instance.Root);
+            shortcutData.Root);
 
-        currentShortcutDataVersion = ShortcutData.Instance.DataVersion;
+        currentShortcutDataVersion = shortcutData.DataVersion;
     }
-
 }

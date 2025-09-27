@@ -3,18 +3,25 @@ using ShortcutManager.UndoRedo;
 
 namespace ShortcutManager;
 
-public sealed class ViewModel : ObservableObject
+public sealed class ViewModel : ObservableObject, IViewModel
 {
+    private readonly IShortcutData shortcutData;
     private Location selectedNodeLocation = Location.Empty;
     private IShortcutOrFolder? currentItem;
 
-    public ViewModel() =>
-        UndoRedoManager.Instance.UndoRedoStateChanged += 
+    public ViewModel(
+        IUndoRedoManager undoRedoManager, 
+        IShortcutData shortcutData)
+    {
+        this.shortcutData = shortcutData;
+
+        undoRedoManager.UndoRedoStateChanged +=
             (canUndo, canRedo) =>
             {
                 CanUndo = canUndo;
                 CanRedo = canRedo;
             };
+    }
 
     public void SetCurrentItem(
         Location selectedNodeLocation,
@@ -70,7 +77,7 @@ public sealed class ViewModel : ObservableObject
                     _ => CurrentItem,
                 };
 
-                ShortcutData.Instance.ReplaceItem(
+                shortcutData.ReplaceItem(
                     selectedNodeLocation,
                     "Name",
                     oldItem,
@@ -101,7 +108,7 @@ public sealed class ViewModel : ObservableObject
                     _ => CurrentItem,
                 };
 
-                ShortcutData.Instance.ReplaceItem(
+                shortcutData.ReplaceItem(
                     selectedNodeLocation,
                     "Icon",
                     oldItem,
@@ -133,7 +140,7 @@ public sealed class ViewModel : ObservableObject
 
                 CurrentItem = item with { TargetPath = value };
 
-                ShortcutData.Instance.ReplaceItem(
+                shortcutData.ReplaceItem(
                     selectedNodeLocation,
                     "Target Path",
                     oldItem,
@@ -177,7 +184,7 @@ public sealed class ViewModel : ObservableObject
 
                 CurrentItem = item with { Arguments = value };
 
-                ShortcutData.Instance.ReplaceItem(
+                shortcutData.ReplaceItem(
                     selectedNodeLocation,
                     "Arguments",
                     oldItem,
@@ -203,7 +210,7 @@ public sealed class ViewModel : ObservableObject
 
                 CurrentItem = item with { StartInPath = value };
 
-                ShortcutData.Instance.ReplaceItem(
+                shortcutData.ReplaceItem(
                     selectedNodeLocation,
                     "Start In Path",
                     oldItem,
@@ -229,7 +236,7 @@ public sealed class ViewModel : ObservableObject
 
                 CurrentItem = item with { ToolTip = value };
 
-                ShortcutData.Instance.ReplaceItem(
+                shortcutData.ReplaceItem(
                     selectedNodeLocation,
                     "Tool Tip",
                     oldItem,

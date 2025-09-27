@@ -1,3 +1,7 @@
+using Microsoft.Extensions.DependencyInjection;
+using ShortcutManager.Data;
+using ShortcutManager.UndoRedo;
+
 namespace ShortcutManager;
 
 /// <summary>
@@ -23,7 +27,12 @@ public static class Program
             // see https://aka.ms/applicationconfiguration.
             Application.ThreadException += Application_ThreadException;
             ApplicationConfiguration.Initialize();
-            Application.Run(new SystemTray());
+
+            var services = new ServiceCollection();
+            ConfigureServices(services);
+            var servicesProvider = services.BuildServiceProvider();
+
+            Application.Run(servicesProvider.GetRequiredService<SystemTray>());
         }
         finally
         {
@@ -47,5 +56,15 @@ public static class Program
 
         if (result == DialogResult.Yes)
             Clipboard.SetText(exception.ToString());
+    }
+
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        services.AddSingleton<IViewModel, ViewModel>();
+        services.AddSingleton<IShortcutData, ShortcutData>();
+        services.AddSingleton<IUndoRedoManager, UndoRedoManager>();
+
+        services.AddTransient<MainForm>();
+        services.AddTransient<SystemTray>();
     }
 }

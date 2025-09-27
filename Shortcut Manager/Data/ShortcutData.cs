@@ -6,26 +6,25 @@ namespace ShortcutManager.Data;
 /// <summary>
 /// Holds the collection of shortcuts, and manages saving and loading them.
 /// </summary>
-public sealed class ShortcutData
+public sealed class ShortcutData : IShortcutData
 {
+    private readonly IUndoRedoManager undoRedoManager;
     public const string NewShortcutText = "New Shortcut";
     public const string NewFolderText = "New Folder";
 
     private static readonly string filename = "ShortcutData.json";
 
-    public static ShortcutData Instance { get; } = new();
-
     public int DataVersion { get; private set; } = 1;
 
-    private ShortcutFolder root = 
+    private ShortcutFolder root =
         new()
         {
             Name = "Root",
             Children = [],
         };
 
-    public ShortcutFolder Root 
-    { 
+    public ShortcutFolder Root
+    {
         get => root;
         private set
         {
@@ -34,35 +33,37 @@ public sealed class ShortcutData
         }
     }
 
-    private ShortcutData()
+    public ShortcutData(
+        IUndoRedoManager undoRedoManager)
     {
+        this.undoRedoManager = undoRedoManager;
         var firstUndoRedoFrameDescription = "No Shortcuts";
 
         try
         {
             Root =
                 JsonSerializer.Deserialize<ShortcutFolder>(
-                    File.ReadAllText(filename)) 
+                    File.ReadAllText(filename))
                 ?? Root;
 
             firstUndoRedoFrameDescription = "Shortcuts Loaded";
         }
         catch (FileNotFoundException) { }
 
-        UndoRedoManager.Instance.AddFrame(
+        undoRedoManager.AddFrame(
             new()
-            { 
+            {
                 Name = firstUndoRedoFrameDescription,
                 Description = null,
-            }, 
+            },
             Root);
-        UndoRedoManager.Instance.ApplyNewShortcutTree += 
+        undoRedoManager.ApplyNewShortcutTree +=
             newRoot => Root = newRoot;
     }
 
-    public Task Save() => 
+    public Task Save() =>
         File.WriteAllTextAsync(
-            filename, 
+            filename,
             JsonSerializer.Serialize(Root));
 
     public IShortcutOrFolder GetItem(
@@ -98,9 +99,9 @@ public sealed class ShortcutData
     }
 
     public Location GetLocation(IShortcutOrFolder item, ShortcutFolder? root = null)
-    { 
+    {
         bool GetLocation(
-            ShortcutFolder parent, 
+            ShortcutFolder parent,
             List<ChildLocation> reversedPath)
         {
             foreach (var (child, index) in parent.Children.Select((child, index) => (child, index)))
@@ -123,7 +124,7 @@ public sealed class ShortcutData
 
         var reversedPath = new List<ChildLocation>();
         GetLocation(root ?? Root, reversedPath);
-        
+
         return new()
         {
             Path = [.. Enumerable.Reverse(reversedPath)],
@@ -163,7 +164,7 @@ public sealed class ShortcutData
     =>
         ApplyNewTree(
             new Change()
-            { 
+            {
                 Name = "Edited " + fieldName,
                 Description = null,
                 IsMergable = true,
@@ -205,13 +206,13 @@ public sealed class ShortcutData
         var movedItem = GetItem(sourceLocation);
         var targetItem = GetItem(targetLocation);
 
-        if (ReferenceEquals(movedItem, targetItem)) 
+        if (ReferenceEquals(movedItem, targetItem))
             return sourceLocation;
 
         var targetAsFolder = targetItem as ShortcutFolder;
         var isTargetAFolder = targetAsFolder is not null;
 
-        var tempTree = 
+        var tempTree =
             CreateNewTree(
                 sourceLocation,
                 oldItem => null);
@@ -222,7 +223,7 @@ public sealed class ShortcutData
             return sourceLocation;
 
         var newIndex =
-            targetAsFolder?.Children.Count() 
+            targetAsFolder?.Children.Count()
             ?? adjustedTargetLocation.Path.Last().Index;
 
         tempTree =
@@ -253,7 +254,7 @@ public sealed class ShortcutData
             new Change()
             {
                 Name = "Move",
-                Description = 
+                Description =
                     String.Join('\\', sourceLocation.Path.Select(l => l.Name)) +
                     " (" +
                     sourceLocation.Path.Last().Index +
@@ -269,8 +270,8 @@ public sealed class ShortcutData
         return GetLocation(movedItem);
     }
 
-    private static void ApplyNewTree(Change change, ShortcutFolder newTree) =>
-        UndoRedoManager.Instance.AddFrame(change, newTree);
+    private void ApplyNewTree(Change change, ShortcutFolder newTree) =>
+        undoRedoManager.AddFrame(change, newTree);
 
     private ShortcutFolder CreateNewTree(
         Location location,
@@ -289,7 +290,7 @@ public sealed class ShortcutData
             // Otherwise, we should be on a folder.
             if (oldItem is not ShortcutFolder oldFolder)
                 return oldItem;
-        
+
             var oldChildCount = oldFolder.Children.Count();
 
             var oldChildLocation = location.Path.FirstOrDefault();
@@ -308,7 +309,7 @@ public sealed class ShortcutData
             // Preceding items are unchanged.
             newChildren.AddRange(oldFolder.Children.Take(oldChildLocation.Index));
 
-            var newChildItem = 
+            var newChildItem =
                 CreateSubTree(
                     oldChildItem,
                     location.ChildPath,

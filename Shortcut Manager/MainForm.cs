@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using ShortcutManager.Data;
 using ShortcutManager.Properties;
 using ShortcutManager.UndoRedo;
@@ -6,10 +7,19 @@ namespace ShortcutManager;
 
 public partial class MainForm : Form
 {
-    private readonly ViewModel viewModel = new();
+    private readonly IViewModel viewModel;
+    private readonly IShortcutData shortcutData;
+    private readonly IUndoRedoManager undoRedoManager;
 
-    public MainForm()
+    public MainForm(
+        IViewModel viewModel,
+        IShortcutData shortcutData,
+        IUndoRedoManager undoRedoManager)
     {
+        this.viewModel = viewModel;
+        this.shortcutData = shortcutData;
+        this.undoRedoManager = undoRedoManager;
+
         InitializeComponent();
 
         SetDoubleBuffered(this);
@@ -24,15 +34,6 @@ public partial class MainForm : Form
 
         UndoButton.DataBindings.Add(nameof(ToolStripSplitButton.Enabled), viewModel, nameof(ViewModel.CanUndo));
         RedoButton.DataBindings.Add(nameof(ToolStripSplitButton.Enabled), viewModel, nameof(ViewModel.CanRedo));
-
-        viewModel.PropertyChanged += (sender, property) =>
-        {
-            if (property.PropertyName != nameof(ViewModel.ShortcutName) &&
-                property.PropertyName != nameof(ViewModel.ShortcutIcon))
-                return;
-
-            RefreshTree();
-        };
     }
 
     // From https://stackoverflow.com/a/77233
@@ -92,12 +93,14 @@ public partial class MainForm : Form
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
+        viewModel.PropertyChanged += ViewModelPropertyChanged;
         RefreshTree();
     }
 
     protected override void OnClosed(EventArgs e)
     {
-        ShortcutData.Instance.Save();
+        shortcutData.Save();
+        viewModel.PropertyChanged -= ViewModelPropertyChanged;
         base.OnClosed(e);
     }
 
@@ -147,7 +150,7 @@ public partial class MainForm : Form
             MainTree.ImageList.Images.Clear();
             MainTree.ImageList.Images.Add(Resources.MissingIcon);
 
-            AddShortcutsToTree(parent: null, ShortcutData.Instance.Root.Children);
+            AddShortcutsToTree(parent: null, shortcutData.Root.Children);
 
             foreach (var oldFolderState in oldFolderStates)
             {
@@ -270,11 +273,11 @@ public partial class MainForm : Form
         return currentNode;
     }
 
-    private static Location GetNearestParentFolderLocation(
+    private Location GetNearestParentFolderLocation(
         Location startingLocation)
     {
         var location = startingLocation;
-        while (ShortcutData.Instance.GetItem(location) is ShortcutItem)
+        while (shortcutData.GetItem(location) is ShortcutItem)
             location = location.ParentPath;
 
         return location;
@@ -282,7 +285,7 @@ public partial class MainForm : Form
 
     private void AddShortcutButton_Click(object sender, EventArgs e)
     {
-        ShortcutData.Instance.AddItem(
+        shortcutData.AddItem(
             GetNearestParentFolderLocation(SelectedLocation()),
             new ShortcutItem
             {
@@ -299,7 +302,7 @@ public partial class MainForm : Form
 
     private void AddFolderButton_Click(object sender, EventArgs e)
     {
-        ShortcutData.Instance.AddItem(
+        shortcutData.AddItem(
             GetNearestParentFolderLocation(SelectedLocation()),
             new ShortcutFolder
             {
@@ -312,7 +315,7 @@ public partial class MainForm : Form
 
     private void DeleteButton_Click(object? sender = null, EventArgs? e = null)
     {
-        ShortcutData.Instance.DeleteItem(
+        shortcutData.DeleteItem(
             SelectedLocation());
 
         RefreshTree();
@@ -329,10 +332,19 @@ public partial class MainForm : Form
             node.Expand();
     }
 
+    private void ViewModelPropertyChanged(object? sender, PropertyChangedEventArgs property)
+    {
+        if (property.PropertyName != nameof(ViewModel.ShortcutName) &&
+            property.PropertyName != nameof(ViewModel.ShortcutIcon))
+            return;
+
+        RefreshTree();
+    }
+
     private void RefreshSelectedShortcut()
     {
         var location = SelectedLocation();
-        var item = ShortcutData.Instance.GetItem(location);
+        var item = shortcutData.GetItem(location);
         var shortcut = item as ShortcutItem;
 
         var isFolder = item is ShortcutFolder;
@@ -441,13 +453,13 @@ public partial class MainForm : Form
 
     private void UndoButton_Click(object sender, EventArgs e)
     {
-        if (UndoRedoManager.Instance.Undo())
+        if (undoRedoManager.Undo())
             RefreshTree();
     }
 
     private void RedoButton_Click(object sender, EventArgs e)
     {
-        if (UndoRedoManager.Instance.Redo())
+        if (undoRedoManager.Redo())
             RefreshTree();
     }
 
@@ -455,7 +467,7 @@ public partial class MainForm : Form
     {
         UndoButton.DropDownItems.Clear();
         
-        foreach (var frame in UndoRedoManager.Instance.UndoFrames)
+        foreach (var frame in undoRedoManager.UndoFrames)
         {
             var newButton = new ToolStripMenuItem
             {
@@ -466,7 +478,7 @@ public partial class MainForm : Form
 
             newButton.Click += (sender, eventArguments) =>
             {
-                if (UndoRedoManager.Instance.SetFrameIndex(frame.Index - 1))
+                if (undoRedoManager.SetFrameIndex(frame.Index - 1))
                     RefreshTree();
             };
 
@@ -478,7 +490,7 @@ public partial class MainForm : Form
     {
         RedoButton.DropDownItems.Clear();
 
-        foreach (var frame in UndoRedoManager.Instance.RedoFrames)
+        foreach (var frame in undoRedoManager.RedoFrames)
         {
             var newButton = new ToolStripMenuItem
             {
@@ -489,7 +501,7 @@ public partial class MainForm : Form
 
             newButton.Click += (sender, eventArguments) =>
             {
-                if (UndoRedoManager.Instance.SetFrameIndex(frame.Index))
+                if (undoRedoManager.SetFrameIndex(frame.Index))
                     RefreshTree();
             };
 
@@ -515,14 +527,14 @@ public partial class MainForm : Form
         var draggedItemLocation = GetLocationOf(draggedNode);
         var targetItemLocation = GetLocationOf(targetNode);
 
-        var draggedItem = ShortcutData.Instance.GetItem(draggedItemLocation);
-        var targetItem = ShortcutData.Instance.GetItem(targetItemLocation);
+        var draggedItem = shortcutData.GetItem(draggedItemLocation);
+        var targetItem = shortcutData.GetItem(targetItemLocation);
 
         if (targetItem is ShortcutFolder targetFolder &&
             targetFolder.Children.Any(childItem => ReferenceEquals(childItem, draggedItem)))
             return;
 
-        var newLocation = ShortcutData.Instance.MoveItem(
+        var newLocation = shortcutData.MoveItem(
             draggedItemLocation,
             targetItemLocation);
 

@@ -2,14 +2,10 @@
 
 namespace ShortcutManager.UndoRedo;
 
-public sealed class UndoRedoManager
+public sealed class UndoRedoManager : IUndoRedoManager
 {
     private readonly List<Frame> history = [];
     private int currentFrameIndex = -1;
-
-    private UndoRedoManager() { }
-
-    public static UndoRedoManager Instance { get; } = new();
 
     public delegate void ApplyNewShortcutTreeEventHandler(ShortcutFolder newRoot);
 
@@ -39,7 +35,7 @@ public sealed class UndoRedoManager
         if (currentFrameIndex >= 0 && currentFrameIndex < history.Count)
         {
             var previousChange = history[currentFrameIndex].Change;
-        
+
             if (change.IsMergable && previousChange.IsMergable &&
                 change.Name == previousChange.Name &&
                 ReferenceEquals(change.OldItem, previousChange.NewItem))
