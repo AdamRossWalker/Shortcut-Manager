@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace ShortcutManager;
+namespace ShortcutManager.Helpers;
 
 public abstract class ObservableObject : INotifyPropertyChanged
 {

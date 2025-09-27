@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.Json.Serialization;
+using ShortcutManager.Helpers;
 
 namespace ShortcutManager.Data;
 

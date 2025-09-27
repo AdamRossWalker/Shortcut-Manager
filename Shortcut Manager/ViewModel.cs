@@ -1,4 +1,5 @@
 ﻿using ShortcutManager.Data;
+using ShortcutManager.Helpers;
 using ShortcutManager.UndoRedo;
 
 namespace ShortcutManager;

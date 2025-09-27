@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using ShortcutManager.Helpers;
 using ShortcutManager.Properties;
 
 namespace ShortcutManager.Data;

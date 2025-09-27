@@ -1,4 +1,4 @@
-﻿namespace ShortcutManager;
+﻿namespace ShortcutManager.Helpers;
 
 public static class IconExtensions
 {

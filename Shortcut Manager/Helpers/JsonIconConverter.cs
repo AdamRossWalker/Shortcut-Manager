@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ShortcutManager;
+namespace ShortcutManager.Helpers;
 
 public class JsonIconConverter : JsonConverter<Icon>
 {
