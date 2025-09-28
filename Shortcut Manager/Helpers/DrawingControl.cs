@@ -6,6 +6,7 @@ namespace ShortcutManager;
 public sealed partial class DrawingControl
 {
     [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial int SendMessage(IntPtr hWnd, int wMsg, [MarshalAs(UnmanagedType.Bool)] bool wParam, int lParam);
 
     private const int WM_SETREDRAW = 11;

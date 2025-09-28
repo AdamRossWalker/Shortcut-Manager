@@ -1,6 +1,6 @@
 ﻿namespace ShortcutManager.Data;
 
-public readonly struct Location
+public readonly record struct Location
 {
     public required IEnumerable<ChildLocation> Path { get; init; }
 

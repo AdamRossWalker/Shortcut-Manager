@@ -21,8 +21,11 @@ public sealed class UndoRedoManagerTests
         publishedStateChanges = [];
 
         subject = new();
-        subject.ApplyNewShortcutTree += publishedTrees.Add;
-        subject.UndoRedoStateChanged += (canUndo, canRedo) => publishedStateChanges.Add((canUndo, canRedo));
+        subject.UndoRedoStateChanged += (newTree, canUndo, canRedo) =>
+        {
+            publishedTrees.Add(newTree);
+            publishedStateChanges.Add((canUndo, canRedo));
+        };
     }
 
     [TestMethod]

@@ -12,7 +12,7 @@ public sealed class ShortcutData : IShortcutData
     public const string NewShortcutText = "New Shortcut";
     public const string NewFolderText = "New Folder";
 
-    private static readonly string filename = "ShortcutData.json";
+    private const string filename = "ShortcutData.json";
 
     public int DataVersion { get; private set; } = 1;
 
@@ -57,8 +57,8 @@ public sealed class ShortcutData : IShortcutData
                 Description = null,
             },
             Root);
-        undoRedoManager.ApplyNewShortcutTree +=
-            newRoot => Root = newRoot;
+
+        undoRedoManager.UndoRedoStateChanged += (newTree, canUndo, canRedo) => Root = newTree;
     }
 
     public Task Save() =>

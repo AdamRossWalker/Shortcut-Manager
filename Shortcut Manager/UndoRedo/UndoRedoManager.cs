@@ -7,13 +7,7 @@ public sealed class UndoRedoManager : IUndoRedoManager
     private readonly List<Frame> history = [];
     private int currentFrameIndex = -1;
 
-    public delegate void ApplyNewShortcutTreeEventHandler(ShortcutFolder newRoot);
-
-    public event ApplyNewShortcutTreeEventHandler? ApplyNewShortcutTree;
-
-    public delegate void UndoRedoStateChangedEventHandler(bool canUndo, bool canRedo);
-
-    public event UndoRedoStateChangedEventHandler? UndoRedoStateChanged;
+    public event UndoRedoStateChangedHandler? UndoRedoStateChanged;
 
     public IEnumerable<Frame> UndoFrames => history.Skip(1).Take(currentFrameIndex).Reverse().Take(10);
 
@@ -96,9 +90,9 @@ public sealed class UndoRedoManager : IUndoRedoManager
         return true;
     }
 
-    private void PublishNewShortcutTree()
-    {
-        ApplyNewShortcutTree?.Invoke(history[currentFrameIndex].Root);
-        UndoRedoStateChanged?.Invoke(UndoFrames.Any(), RedoFrames.Any());
-    }
+    private void PublishNewShortcutTree() => 
+        UndoRedoStateChanged?.Invoke(
+            history[currentFrameIndex].Root,
+            UndoFrames.Any(),
+            RedoFrames.Any());
 }

@@ -31,6 +31,8 @@ public abstract class ObservableObject : INotifyPropertyChanged
         return true;
     }
 
+#pragma warning disable CA1030 // Use events where appropriate
     protected void RaisePropertyChanged([CallerMemberName] string propertyName = null!) =>
         PropertyChanged?.Invoke(this, new(propertyName));
+#pragma warning restore CA1030 // Use events where appropriate
 }

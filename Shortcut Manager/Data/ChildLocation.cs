@@ -1,6 +1,6 @@
 ﻿namespace ShortcutManager.Data;
 
-public readonly struct ChildLocation
+public readonly record struct ChildLocation
 {
     public required int Index { get; init; }
 

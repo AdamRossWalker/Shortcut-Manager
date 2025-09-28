@@ -10,6 +10,7 @@
     <ApplicationIcon>Shortcut Manager.ico</ApplicationIcon>
     <NeutralLanguage>en</NeutralLanguage>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AnalysisLevel>latest-all</AnalysisLevel>
   </PropertyGroup>
 
   <ItemGroup>

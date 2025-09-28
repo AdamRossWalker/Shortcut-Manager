@@ -54,6 +54,14 @@ public sealed class SystemTray : ApplicationContext
             Open();
     }
 
+    protected override void Dispose(bool disposing)
+    {
+        notifyIcon.Dispose();
+        shortcutsContextMenu.Dispose();
+        mainContextMenu.Dispose();
+        base.Dispose(disposing);
+    }
+
     private void MouseDown(object? sender, MouseEventArgs eventArguments)
     {
         if (eventArguments.Button == MouseButtons.Right)
@@ -89,8 +97,35 @@ public sealed class SystemTray : ApplicationContext
         Application.Exit();
     }
 
+    private void ClearContextMenuItems()
+    {
+        var allMenuItems = new List<ToolStripItem>();
+
+        void CollectItems(ToolStripItemCollection items)
+        {
+            foreach (var item in items.Cast<ToolStripItem>())
+            {
+                allMenuItems.Add(item);
+
+                if (item is ToolStripMenuItem menuItem)
+                    CollectItems(menuItem.DropDownItems);
+            }
+        }
+
+        CollectItems(shortcutsContextMenu.Items);
+        shortcutsContextMenu.Items.Clear();
+
+        foreach (var item in allMenuItems)
+            item.Dispose();
+    }
+
     private void RefreshShortcutsContextMenu()
     {
+        if (currentShortcutDataVersion == shortcutData.DataVersion)
+            return;
+
+        ClearContextMenuItems();
+
         static bool AddFolder(
             ToolStripItemCollection parentMenuItem,
             ShortcutFolder shortcutFolder)
@@ -101,11 +136,13 @@ public sealed class SystemTray : ApplicationContext
             {
                 var shouldAddThisMenuItem = false;
 
+#pragma warning disable CA2000 // Dispose objects before losing scope
                 var menuItem = new ToolStripMenuItem()
                 {
                     Text = sourceItem.Name,
                     Image = sourceItem.Icon?.ToBitmap(),
                 };
+#pragma warning restore CA2000 // Dispose objects before losing scope
 
                 if (sourceItem is ShortcutItem shortcut)
                 {
@@ -126,11 +163,6 @@ public sealed class SystemTray : ApplicationContext
 
             return hasAddedItems;
         }
-
-        if (currentShortcutDataVersion == shortcutData.DataVersion)
-            return;
-
-        shortcutsContextMenu.Items.Clear();
 
         AddFolder(
             shortcutsContextMenu.Items,

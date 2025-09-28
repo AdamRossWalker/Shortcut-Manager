@@ -7,9 +7,9 @@ public interface IUndoRedoManager
 
     public IEnumerable<Frame> UndoFrames { get; }
 
-    public event UndoRedoManager.ApplyNewShortcutTreeEventHandler? ApplyNewShortcutTree;
-    
-    public event UndoRedoManager.UndoRedoStateChangedEventHandler? UndoRedoStateChanged;
+#pragma warning disable CA1003 // Use generic event handler instances
+    public event UndoRedoStateChangedHandler? UndoRedoStateChanged;
+#pragma warning restore CA1003 // Use generic event handler instances
 
     public void AddFrame(Change change, ShortcutFolder newRoot);
     

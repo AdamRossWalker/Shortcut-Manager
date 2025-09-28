@@ -17,7 +17,7 @@ public sealed class ViewModel : ObservableObject, IViewModel
         this.shortcutData = shortcutData;
 
         undoRedoManager.UndoRedoStateChanged +=
-            (canUndo, canRedo) =>
+            (newTree, canUndo, canRedo) =>
             {
                 CanUndo = canUndo;
                 CanRedo = canRedo;
@@ -266,7 +266,7 @@ public sealed class ViewModel : ObservableObject, IViewModel
     {
         Icon? newIcon;
 
-        var extension = Path.GetExtension(filename).ToUpper();
+        var extension = Path.GetExtension(filename).ToUpper(System.Globalization.CultureInfo.CurrentCulture);
         if (extension == ".EXE" ||
             extension == ".COM" ||
             extension == ".CMD" ||
