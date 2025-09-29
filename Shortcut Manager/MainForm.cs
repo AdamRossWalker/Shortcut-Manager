@@ -395,6 +395,8 @@ public partial class MainForm : Form
             DeleteButton.Enabled = isEither;
             MainTreeContextMenuAddDeleteButton.Enabled = isEither;
 
+            ExecuteShortcutButton.Visible = isShortcut;
+
             viewModel.SetCurrentItem(location, item);
         }
         finally
