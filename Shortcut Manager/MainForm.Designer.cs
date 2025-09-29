@@ -42,6 +42,7 @@
             DeleteButton = new ToolStripButton();
             UndoButton = new ToolStripSplitButton();
             RedoButton = new ToolStripSplitButton();
+            ExitToolStripButton = new ToolStripButton();
             IconLabel = new Label();
             TargetPathLabel = new Label();
             ArgumentsLabel = new Label();
@@ -159,7 +160,7 @@
             // 
             MainTableLayoutPanel.SetColumnSpan(MainToolStrip, 4);
             MainToolStrip.ImageScalingSize = new Size(24, 24);
-            MainToolStrip.Items.AddRange(new ToolStripItem[] { AddShortcutButton, AddFolderButton, DeleteButton, UndoButton, RedoButton });
+            MainToolStrip.Items.AddRange(new ToolStripItem[] { AddShortcutButton, AddFolderButton, DeleteButton, UndoButton, RedoButton, ExitToolStripButton });
             MainToolStrip.Location = new Point(0, 0);
             MainToolStrip.Name = "MainToolStrip";
             MainToolStrip.Size = new Size(800, 34);
@@ -219,6 +220,16 @@
             RedoButton.Text = "Redo";
             RedoButton.ButtonClick += RedoButton_Click;
             RedoButton.DropDownOpening += RedoButton_DropDownOpening;
+            // 
+            // ExitToolStripButton
+            // 
+            ExitToolStripButton.Alignment = ToolStripItemAlignment.Right;
+            ExitToolStripButton.Image = Properties.Resources.Delete;
+            ExitToolStripButton.ImageTransparentColor = Color.Magenta;
+            ExitToolStripButton.Name = "ExitToolStripButton";
+            ExitToolStripButton.Size = new Size(67, 29);
+            ExitToolStripButton.Text = "E&xit";
+            ExitToolStripButton.Click += ExitToolStripButton_Click;
             // 
             // IconLabel
             // 
@@ -449,5 +460,6 @@
         private Button ExecuteShortcutButton;
         private ToolStripSplitButton UndoButton;
         private ToolStripSplitButton RedoButton;
+        private ToolStripButton ExitToolStripButton;
     }
 }

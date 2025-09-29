@@ -8,7 +8,7 @@ namespace ShortcutManager;
 /// <summary>
 /// Manages the system tray icon, popup menus, and loading the main window.
 /// </summary>
-public sealed class SystemTray : ApplicationContext
+public sealed class SystemTray : ApplicationContext, IApplicationContext
 {
     private readonly IServiceProvider serviceProvider;
     private readonly IShortcutData shortcutData;
@@ -24,8 +24,8 @@ public sealed class SystemTray : ApplicationContext
         this.serviceProvider = serviceProvider;
         this.shortcutData = shortcutData;
 
-        shortcutsContextMenu = new() 
-        { 
+        shortcutsContextMenu = new()
+        {
             ShowItemToolTips = true,
         };
 
@@ -34,13 +34,13 @@ public sealed class SystemTray : ApplicationContext
             Items =
             {
                 new ToolStripMenuItem("&Open...", Resources.ApplicationIcon.ToBitmap(), Open),
-                new ToolStripMenuItem("E&xit", Resources.Delete, Exit)
+                new ToolStripMenuItem("E&xit", Resources.Delete, (_, _) => ExitProgram())
             },
         };
 
         notifyIcon = new()
         {
-            Icon = Properties.Resources.ApplicationIcon,
+            Icon = Resources.ApplicationIcon,
             Visible = true,
             ContextMenuStrip = mainContextMenu,
         };
@@ -91,7 +91,7 @@ public sealed class SystemTray : ApplicationContext
     private void Open(object? sender = null, EventArgs? eventArgs = null) =>
         serviceProvider.GetRequiredService<MainForm>().Show();
 
-    private void Exit(object? sender = null, EventArgs? eventArgs = null)
+    public void ExitProgram()
     {
         notifyIcon.Visible = false;
         Application.Exit();

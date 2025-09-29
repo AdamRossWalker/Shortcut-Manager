@@ -7,15 +7,18 @@ namespace ShortcutManager;
 
 public partial class MainForm : Form
 {
+    private readonly IApplicationContext applicationContext;
     private readonly IViewModel viewModel;
     private readonly IShortcutData shortcutData;
     private readonly IUndoRedoManager undoRedoManager;
 
     public MainForm(
+        IApplicationContext applicationContext,
         IViewModel viewModel,
         IShortcutData shortcutData,
         IUndoRedoManager undoRedoManager)
     {
+        this.applicationContext = applicationContext;
         this.viewModel = viewModel;
         this.shortcutData = shortcutData;
         this.undoRedoManager = undoRedoManager;
@@ -491,7 +494,7 @@ public partial class MainForm : Form
     private void UndoButton_DropDownOpening(object sender, EventArgs e)
     {
         UndoButton.DropDownItems.Clear();
-        
+
         foreach (var frame in undoRedoManager.UndoFrames)
         {
             var newButton = new ToolStripMenuItem
@@ -541,7 +544,7 @@ public partial class MainForm : Form
             return;
 
         e.Effect = e.AllowedEffect;
-        
+
         var targetNode = MainTree.GetNodeAt(MainTree.PointToClient(new Point(e.X, e.Y)));
         if (targetNode is null)
             return;
@@ -577,4 +580,7 @@ public partial class MainForm : Form
 
         DoDragDrop(node, DragDropEffects.Move);
     }
+
+    private void ExitToolStripButton_Click(object sender, EventArgs e) => 
+        applicationContext.ExitProgram();
 }

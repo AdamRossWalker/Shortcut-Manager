@@ -63,8 +63,9 @@ public static class Program
         services.AddSingleton<IViewModel, ViewModel>();
         services.AddSingleton<IShortcutData, ShortcutData>();
         services.AddSingleton<IUndoRedoManager, UndoRedoManager>();
+        services.AddSingleton<SystemTray>();
+        services.AddSingleton<IApplicationContext>(x => x.GetRequiredService<SystemTray>());
 
         services.AddTransient<MainForm>();
-        services.AddTransient<SystemTray>();
     }
 }
