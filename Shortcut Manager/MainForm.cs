@@ -331,7 +331,7 @@ public partial class MainForm : Form
     {
         var location = SelectedLocation();
 
-        if (!location.Path.Any())
+        if (location.IsEmpty)
             return;
 
         shortcutData.DeleteItem(location);
@@ -444,7 +444,7 @@ public partial class MainForm : Form
     private void MainTree_KeyDown(object sender, KeyEventArgs e)
     {
         var selectedItem = SelectedLocation();
-        if (!selectedItem.Path.Any())
+        if (selectedItem.IsEmpty)
             return;
 
         switch (e.KeyCode)

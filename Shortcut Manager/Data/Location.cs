@@ -14,6 +14,8 @@ public readonly record struct Location
         Path = Path.SkipLast(1),
     };
 
+    public bool IsEmpty => !Path.Any();
+
     public static readonly Location Empty =
         new()
         {

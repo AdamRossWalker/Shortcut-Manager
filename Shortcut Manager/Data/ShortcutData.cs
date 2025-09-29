@@ -69,14 +69,14 @@ public sealed class ShortcutData : IShortcutData
     public IShortcutOrFolder? GetItem(
         Location location)
     {
-        if (!location.Path.Any())
+        if (location.IsEmpty)
             return null;
 
         static IShortcutOrFolder GetNextLevelIn(
             IShortcutOrFolder parent,
             Location location)
         {
-            if (!location.Path.Any())
+            if (location.IsEmpty)
                 return parent;
 
             if (parent is not ShortcutFolder folder)
@@ -195,8 +195,8 @@ public sealed class ShortcutData : IShortcutData
         Location sourceLocation,
         Location targetLocation)
     {
-        if (!sourceLocation.Path.Any() ||
-            !targetLocation.Path.Any())
+        if (sourceLocation.IsEmpty ||
+            targetLocation.IsEmpty)
             return sourceLocation;
 
         if (Enumerable.SequenceEqual(
@@ -227,7 +227,7 @@ public sealed class ShortcutData : IShortcutData
 
         // After the above delete, the target location may have now changed.
         var adjustedTargetLocation = GetLocation(targetItem, tempTree);
-        if (!adjustedTargetLocation.Path.Any())
+        if (adjustedTargetLocation.IsEmpty)
             return sourceLocation;
 
         var newIndex =
@@ -292,7 +292,7 @@ public sealed class ShortcutData : IShortcutData
             Func<IShortcutOrFolder, IShortcutOrFolder?> createNewItemFrom)
         {
             // If we are at the target leaf node, just make the change.
-            if (!location.Path.Any())
+            if (location.IsEmpty)
                 return createNewItemFrom(oldItem);
 
             // Otherwise, we should be on a folder.
