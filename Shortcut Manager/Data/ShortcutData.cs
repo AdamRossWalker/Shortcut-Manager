@@ -95,7 +95,7 @@ public sealed class ShortcutData : IShortcutData
 
             return GetNextLevelIn(
                 childItem,
-                location.ChildPath);
+                location.ChildPath());
         }
 
         return GetNextLevelIn(Root, location);
@@ -200,8 +200,8 @@ public sealed class ShortcutData : IShortcutData
             return sourceLocation;
 
         if (Enumerable.SequenceEqual(
-            sourceLocation.ParentPath.Path,
-            targetLocation.ParentPath.Path) &&
+            sourceLocation.ParentPath().Path,
+            targetLocation.ParentPath().Path) &&
             sourceLocation.Path.Last().Index + 1 ==
             targetLocation.Path.Last().Index)
             return sourceLocation;
@@ -238,7 +238,7 @@ public sealed class ShortcutData : IShortcutData
             CreateNewTree(
                 isTargetAFolder
                     ? adjustedTargetLocation
-                    : adjustedTargetLocation.ParentPath,
+                    : adjustedTargetLocation.ParentPath(),
                 oldItem =>
                 {
                     if (oldItem is not ShortcutFolder oldFolder)
@@ -320,7 +320,7 @@ public sealed class ShortcutData : IShortcutData
             var newChildItem =
                 CreateSubTree(
                     oldChildItem,
-                    location.ChildPath,
+                    location.ChildPath(),
                     createNewItemFrom);
 
             if (newChildItem is not null)

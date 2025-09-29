@@ -292,7 +292,7 @@ public partial class MainForm : Form
     {
         var location = startingLocation;
         while (shortcutData.GetItem(location) is ShortcutItem)
-            location = location.ParentPath;
+            location = location.ParentPath();
 
         return location;
     }

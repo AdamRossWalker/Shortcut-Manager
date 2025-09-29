@@ -4,12 +4,12 @@ public readonly record struct Location
 {
     public required IEnumerable<ChildLocation> Path { get; init; }
 
-    public Location ChildPath => new()
+    public Location ChildPath() => new()
     {
         Path = Path.Skip(1),
     };
 
-    public Location ParentPath => new()
+    public Location ParentPath() => new()
     {
         Path = Path.SkipLast(1),
     };
