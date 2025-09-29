@@ -413,6 +413,8 @@ public partial class MainForm : Form
     {
         BrowseFileDialog.Filter = "Executable File (*.exe;*.com;*.cmd)|*.exe;*.com;*.cmd|Icons (*.ico)|*.ico|All Files (*.*)|*.*";
         BrowseFileDialog.FilterIndex = 0;
+        BrowseFileDialog.InitialDirectory = Path.GetDirectoryName(viewModel.TargetPath);
+        BrowseFileDialog.FileName = Path.GetFileName(viewModel.TargetPath);
 
         if (BrowseFileDialog.ShowDialog() != DialogResult.OK)
             return;
@@ -424,6 +426,8 @@ public partial class MainForm : Form
     {
         BrowseFileDialog.Filter = "Executable File (*.exe;*.com;*.cmd;*.bat)|*.exe;*.com;*.cmd;*.bat|All Files (*.*)|*.*";
         BrowseFileDialog.FilterIndex = 0;
+        BrowseFileDialog.InitialDirectory = Path.GetDirectoryName(viewModel.TargetPath);
+        BrowseFileDialog.FileName = Path.GetFileName(viewModel.TargetPath);
 
         BrowseFileDialog.DefaultExt = "Executable File (*.exe;*.com;*.cmd;*.bat)";
 
@@ -437,6 +441,8 @@ public partial class MainForm : Form
 
     private void StartInBrowseButton_Click(object sender, EventArgs e)
     {
+        BrowseFolderDialog.InitialDirectory = viewModel.StartInPath!;
+
         if (BrowseFolderDialog.ShowDialog() != DialogResult.OK)
             return;
 
