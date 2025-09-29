@@ -66,9 +66,12 @@ public sealed class ShortcutData : IShortcutData
             filename,
             JsonSerializer.Serialize(Root));
 
-    public IShortcutOrFolder GetItem(
+    public IShortcutOrFolder? GetItem(
         Location location)
     {
+        if (!location.Path.Any())
+            return null;
+
         static IShortcutOrFolder GetNextLevelIn(
             IShortcutOrFolder parent,
             Location location)
@@ -204,7 +207,12 @@ public sealed class ShortcutData : IShortcutData
             return sourceLocation;
 
         var movedItem = GetItem(sourceLocation);
+        if (movedItem is null)
+            return sourceLocation;
+
         var targetItem = GetItem(targetLocation);
+        if (targetItem is null)
+            return sourceLocation;
 
         if (ReferenceEquals(movedItem, targetItem))
             return sourceLocation;

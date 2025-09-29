@@ -194,6 +194,9 @@ public partial class MainForm : Form
 
     private static Location GetLocationOf(TreeNode? node)
     {
+        if (node is null)
+            return Data.Location.Empty;
+
         static IEnumerable<ChildLocation> PathTo(TreeNode? node)
         {
             if (node is null)
@@ -217,8 +220,19 @@ public partial class MainForm : Form
 
     private Location SelectedLocation() => GetLocationOf(MainTree.SelectedNode);
 
+    /// <summary>
+    /// Because SelectedNode is designed to be broken and doesn't fire AfterSelect if the new node is null.
+    /// </summary>
+    private void SetSelectedNodeProperly(TreeNode? newNode)
+    {
+        MainTree.SelectedNode = newNode;
+
+        if (newNode is null)
+            MainTree_AfterSelect(MainTree, new(newNode));
+    }
+
     private void SelectBestNodeFrom(Location location) =>
-        MainTree.SelectedNode = GetBestNodeFrom(location);
+        SetSelectedNodeProperly(GetBestNodeFrom(location));
 
     private TreeNode? GetBestNodeFrom(Location nodeLocation)
     {
@@ -315,9 +329,12 @@ public partial class MainForm : Form
 
     private void DeleteButton_Click(object? sender = null, EventArgs? e = null)
     {
-        shortcutData.DeleteItem(
-            SelectedLocation());
+        var location = SelectedLocation();
 
+        if (!location.Path.Any())
+            return;
+
+        shortcutData.DeleteItem(location);
         RefreshTree();
     }
 
@@ -375,8 +392,8 @@ public partial class MainForm : Form
             ToolTipLabel.Visible = isShortcut;
             ToolTipTextBox.Visible = isShortcut;
 
-            DeleteButton.Visible = isEither;
-            MainTreeContextMenuAddDeleteButton.Visible = isEither;
+            DeleteButton.Enabled = isEither;
+            MainTreeContextMenuAddDeleteButton.Enabled = isEither;
 
             viewModel.SetCurrentItem(location, item);
         }
@@ -541,7 +558,7 @@ public partial class MainForm : Form
         RefreshTree();
         var newlyMovedNode = GetBestNodeFrom(newLocation);
 
-        MainTree.SelectedNode = newlyMovedNode;
+        SetSelectedNodeProperly(newlyMovedNode);
         e.Data!.SetData(typeof(TreeNode), newlyMovedNode);
     }
 

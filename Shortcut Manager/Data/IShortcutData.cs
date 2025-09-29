@@ -6,7 +6,7 @@ public interface IShortcutData
 
     public ShortcutFolder Root { get; }
 
-    public IShortcutOrFolder GetItem(Location location);
+    public IShortcutOrFolder? GetItem(Location location);
 
     public Location GetLocation(IShortcutOrFolder item, ShortcutFolder? root = null);
 
