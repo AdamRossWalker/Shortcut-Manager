@@ -581,6 +581,20 @@ public partial class MainForm : Form
         DoDragDrop(node, DragDropEffects.Move);
     }
 
-    private void ExitToolStripButton_Click(object sender, EventArgs e) => 
+    private void ExitToolStripButton_Click(object sender, EventArgs e) =>
         applicationContext.ExitProgram();
+
+    private void DuplicateToolStripButton_Click(object sender, EventArgs e)
+    {
+        var location = SelectedLocation();
+        if (location.IsEmpty)
+            return;
+
+        var oldItem = shortcutData.GetItem(location);
+        if (oldItem is null)
+            return;
+
+        shortcutData.AddItem(location.ParentPath(), oldItem);
+        RefreshTree();
+    }
 }

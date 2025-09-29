@@ -34,11 +34,13 @@
             MainTreeeMenuStrip = new ContextMenuStrip(components);
             MainTreeContextMenuAddShortcutButton = new ToolStripMenuItem();
             MainTreeContextMenuAddFolderButton = new ToolStripMenuItem();
+            DuplicateToolStripMenuItem = new ToolStripMenuItem();
             MainTreeContextMenuAddDeleteButton = new ToolStripMenuItem();
             MainTableLayoutPanel = new TableLayoutPanel();
             MainToolStrip = new ToolStrip();
             AddShortcutButton = new ToolStripButton();
             AddFolderButton = new ToolStripButton();
+            DuplicateToolStripButton = new ToolStripButton();
             DeleteButton = new ToolStripButton();
             UndoButton = new ToolStripSplitButton();
             RedoButton = new ToolStripSplitButton();
@@ -86,9 +88,9 @@
             // MainTreeeMenuStrip
             // 
             MainTreeeMenuStrip.ImageScalingSize = new Size(24, 24);
-            MainTreeeMenuStrip.Items.AddRange(new ToolStripItem[] { MainTreeContextMenuAddShortcutButton, MainTreeContextMenuAddFolderButton, MainTreeContextMenuAddDeleteButton });
+            MainTreeeMenuStrip.Items.AddRange(new ToolStripItem[] { MainTreeContextMenuAddShortcutButton, MainTreeContextMenuAddFolderButton, DuplicateToolStripMenuItem, MainTreeContextMenuAddDeleteButton });
             MainTreeeMenuStrip.Name = "MainTreeeMenuStrip";
-            MainTreeeMenuStrip.Size = new Size(199, 100);
+            MainTreeeMenuStrip.Size = new Size(199, 132);
             // 
             // MainTreeContextMenuAddShortcutButton
             // 
@@ -105,6 +107,14 @@
             MainTreeContextMenuAddFolderButton.Size = new Size(198, 32);
             MainTreeContextMenuAddFolderButton.Text = "Add Folder";
             MainTreeContextMenuAddFolderButton.Click += AddFolderButton_Click;
+            // 
+            // DuplicateToolStripMenuItem
+            // 
+            DuplicateToolStripMenuItem.Image = Properties.Resources.Duplicate;
+            DuplicateToolStripMenuItem.Name = "DuplicateToolStripMenuItem";
+            DuplicateToolStripMenuItem.Size = new Size(198, 32);
+            DuplicateToolStripMenuItem.Text = "Duplicate";
+            DuplicateToolStripMenuItem.Click += DuplicateToolStripButton_Click;
             // 
             // MainTreeContextMenuAddDeleteButton
             // 
@@ -160,7 +170,7 @@
             // 
             MainTableLayoutPanel.SetColumnSpan(MainToolStrip, 4);
             MainToolStrip.ImageScalingSize = new Size(24, 24);
-            MainToolStrip.Items.AddRange(new ToolStripItem[] { AddShortcutButton, AddFolderButton, DeleteButton, UndoButton, RedoButton, ExitToolStripButton });
+            MainToolStrip.Items.AddRange(new ToolStripItem[] { AddShortcutButton, AddFolderButton, DuplicateToolStripButton, DeleteButton, UndoButton, RedoButton, ExitToolStripButton });
             MainToolStrip.Location = new Point(0, 0);
             MainToolStrip.Name = "MainToolStrip";
             MainToolStrip.Size = new Size(800, 34);
@@ -186,6 +196,15 @@
             AddFolderButton.Size = new Size(129, 29);
             AddFolderButton.Text = "Add Folder";
             AddFolderButton.Click += AddFolderButton_Click;
+            // 
+            // DuplicateToolStripButton
+            // 
+            DuplicateToolStripButton.Image = Properties.Resources.Duplicate;
+            DuplicateToolStripButton.ImageTransparentColor = Color.Magenta;
+            DuplicateToolStripButton.Name = "DuplicateToolStripButton";
+            DuplicateToolStripButton.Size = new Size(114, 29);
+            DuplicateToolStripButton.Text = "Duplicate";
+            DuplicateToolStripButton.Click += DuplicateToolStripButton_Click;
             // 
             // DeleteButton
             // 
@@ -461,5 +480,7 @@
         private ToolStripSplitButton UndoButton;
         private ToolStripSplitButton RedoButton;
         private ToolStripButton ExitToolStripButton;
+        private ToolStripButton DuplicateToolStripButton;
+        private ToolStripMenuItem DuplicateToolStripMenuItem;
     }
 }
