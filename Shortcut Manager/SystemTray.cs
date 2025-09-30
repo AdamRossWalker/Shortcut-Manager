@@ -59,6 +59,7 @@ public sealed class SystemTray : ApplicationContext, IApplicationContext
         notifyIcon.Dispose();
         shortcutsContextMenu.Dispose();
         mainContextMenu.Dispose();
+        mainForm?.Dispose();
         base.Dispose(disposing);
     }
 
@@ -88,8 +89,19 @@ public sealed class SystemTray : ApplicationContext, IApplicationContext
         showContextMenuMethod!.Invoke(notifyIcon, null);
     }
 
-    private void Open(object? sender = null, EventArgs? eventArgs = null) =>
-        serviceProvider.GetRequiredService<MainForm>().Show();
+    private MainForm? mainForm = null;
+
+    private void Open(object? sender = null, EventArgs? eventArgs = null)
+    {
+        if (mainForm is not null && mainForm.Visible)
+        {
+            mainForm.Activate();
+            return;
+        }
+
+        mainForm = serviceProvider.GetRequiredService<MainForm>();
+        mainForm.Show();
+    }
 
     public void ExitProgram()
     {

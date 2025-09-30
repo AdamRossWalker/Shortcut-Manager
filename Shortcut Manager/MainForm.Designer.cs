@@ -243,7 +243,7 @@
             // ExitToolStripButton
             // 
             ExitToolStripButton.Alignment = ToolStripItemAlignment.Right;
-            ExitToolStripButton.Image = Properties.Resources.Delete;
+            ExitToolStripButton.Image = Properties.Resources.Close;
             ExitToolStripButton.ImageTransparentColor = Color.Magenta;
             ExitToolStripButton.Name = "ExitToolStripButton";
             ExitToolStripButton.Size = new Size(67, 29);
