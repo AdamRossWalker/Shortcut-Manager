@@ -290,20 +290,10 @@ public partial class MainForm : Form
         return currentNode;
     }
 
-    private Location GetNearestParentFolderLocation(
-        Location startingLocation)
-    {
-        var location = startingLocation;
-        while (shortcutData.GetItem(location) is ShortcutItem)
-            location = location.ParentPath();
-
-        return location;
-    }
-
     private void AddShortcutButton_Click(object sender, EventArgs e)
     {
         shortcutData.AddItem(
-            GetNearestParentFolderLocation(SelectedLocation()),
+            SelectedLocation(),
             new ShortcutItem
             {
                 Name = ShortcutData.NewShortcutText,
@@ -320,7 +310,7 @@ public partial class MainForm : Form
     private void AddFolderButton_Click(object sender, EventArgs e)
     {
         shortcutData.AddItem(
-            GetNearestParentFolderLocation(SelectedLocation()),
+            SelectedLocation(),
             new ShortcutFolder
             {
                 Name = ShortcutData.NewFolderText,
@@ -594,7 +584,7 @@ public partial class MainForm : Form
         if (oldItem is null)
             return;
 
-        shortcutData.AddItem(location.ParentPath(), oldItem);
+        shortcutData.AddItem(location, oldItem);
         RefreshTree();
     }
 }

@@ -137,7 +137,23 @@ public sealed class ShortcutData : IShortcutData
     public void AddItem(
         Location location,
         IShortcutOrFolder newItem)
-    =>
+    {
+        var leafItem = GetItem(location);
+
+        Location parentFolderLocation;
+        int? targetIndex;
+
+        if (leafItem is ShortcutItem)
+        {
+            parentFolderLocation = location.ParentPath();
+            targetIndex = location.Path.Last().Index + 1;
+        }
+        else
+        {
+            parentFolderLocation = location;
+            targetIndex = null;
+        }
+
         ApplyNewTree(
             new Change()
             {
@@ -145,19 +161,27 @@ public sealed class ShortcutData : IShortcutData
                 Description = null,
             },
             CreateNewTree(
-                location,
+                parentFolderLocation,
                 oldItem =>
                 {
                     if (oldItem is not ShortcutFolder oldFolder)
                         return oldItem;
 
+                    targetIndex ??= oldFolder.Children.Count();
+
                     return new ShortcutFolder
                     {
                         Name = oldFolder.Name,
                         Icon = oldFolder.Icon,
-                        Children = [.. oldFolder.Children, newItem],
+                        Children = 
+                        [
+                            .. oldFolder.Children.Take(targetIndex.Value), 
+                            newItem,
+                            .. oldFolder.Children.Skip(targetIndex.Value),
+                        ],
                     };
                 }));
+    }
 
     public void ReplaceItem(
         Location location,
