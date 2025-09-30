@@ -84,6 +84,7 @@
             MainTree.AfterSelect += MainTree_AfterSelect;
             MainTree.DragOver += MainTree_DragOver;
             MainTree.KeyDown += MainTree_KeyDown;
+            MainTree.MouseDown += MainTree_MouseDown;
             // 
             // MainTreeeMenuStrip
             // 

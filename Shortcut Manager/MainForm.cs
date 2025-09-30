@@ -590,4 +590,7 @@ public partial class MainForm : Form
         shortcutData.AddItem(location, oldItem);
         RefreshTree();
     }
+
+    private void MainTree_MouseDown(object sender, MouseEventArgs e) => 
+        SetSelectedNodeProperly(MainTree.GetNodeAt(new(e.X, e.Y)));
 }
