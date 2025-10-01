@@ -438,8 +438,10 @@
             ClientSize = new Size(800, 450);
             Controls.Add(MainTableLayoutPanel);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            KeyPreview = true;
             Name = "MainForm";
             Text = "Shortcut Manager";
+            KeyDown += MainForm_KeyDown;
             MainTreeeMenuStrip.ResumeLayout(false);
             MainTableLayoutPanel.ResumeLayout(false);
             MainTableLayoutPanel.PerformLayout();

@@ -469,13 +469,13 @@ public partial class MainForm : Form
         shortcut.Execute();
     }
 
-    private void UndoButton_Click(object sender, EventArgs e)
+    private void UndoButton_Click(object? sender = null, EventArgs? e = null)
     {
         if (undoRedoManager.Undo())
             RefreshTree();
     }
 
-    private void RedoButton_Click(object sender, EventArgs e)
+    private void RedoButton_Click(object? sender = null, EventArgs? e = null)
     {
         if (undoRedoManager.Redo())
             RefreshTree();
@@ -591,6 +591,25 @@ public partial class MainForm : Form
         RefreshTree();
     }
 
-    private void MainTree_MouseDown(object sender, MouseEventArgs e) => 
+    private void MainTree_MouseDown(object sender, MouseEventArgs e) =>
         SetSelectedNodeProperly(MainTree.GetNodeAt(new(e.X, e.Y)));
+
+    private void MainForm_KeyDown(object sender, KeyEventArgs e)
+    {
+        var isTextBox = ActiveControl is TextBox;
+
+        switch (e.KeyCode)
+        {
+            case Keys.Z when e.Control &!e.Shift & !isTextBox:
+                UndoButton_Click();
+                e.SuppressKeyPress = true;
+                return;
+
+            case Keys.Z when e.Control && e.Shift & !isTextBox:
+            case Keys.Y when e.Control:
+                RedoButton_Click();
+                e.SuppressKeyPress = true;
+                return;
+        }
+    }
 }
