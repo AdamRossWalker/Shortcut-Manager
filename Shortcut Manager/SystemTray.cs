@@ -34,7 +34,7 @@ public sealed class SystemTray : ApplicationContext, IApplicationContext
             Items =
             {
                 new ToolStripMenuItem("&Open...", Resources.ApplicationIcon.ToBitmap(), Open),
-                new ToolStripMenuItem("E&xit", Resources.Delete, (_, _) => ExitProgram())
+                new ToolStripMenuItem("E&xit", Resources.Close, (_, _) => ExitProgram())
             },
         };
 
