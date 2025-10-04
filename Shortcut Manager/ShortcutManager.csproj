@@ -1,6 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
+    <PropertyGroup>
+        <ShortcutManagerVersion>1.0.0</ShortcutManagerVersion>
+    </PropertyGroup>
+
+    <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
@@ -13,9 +17,9 @@
     <AnalysisLevel>latest-all</AnalysisLevel>
     <StartupObject>ShortcutManager.Program</StartupObject>
     <Title>Shortcut Manager</Title>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <AssemblyFileVersion>1.0.0</AssemblyFileVersion>
-    <InformationalVersion>1.0.0</InformationalVersion>
+    <AssemblyVersion>$(ShortcutManagerVersion)</AssemblyVersion>
+    <AssemblyFileVersion>$(ShortcutManagerVersion)</AssemblyFileVersion>
+    <InformationalVersion>$(ShortcutManagerVersion)</InformationalVersion>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
