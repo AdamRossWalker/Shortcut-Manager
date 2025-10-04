@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Microsoft.Extensions.DependencyInjection;
 using ShortcutManager.Data;
 using ShortcutManager.Properties;
 using ShortcutManager.UndoRedo;
@@ -7,18 +8,18 @@ namespace ShortcutManager;
 
 public partial class MainForm : Form
 {
-    private readonly IApplicationContext applicationContext;
+    private readonly IServiceProvider serviceProvider;
     private readonly IViewModel viewModel;
     private readonly IShortcutData shortcutData;
     private readonly IUndoRedoManager undoRedoManager;
 
     public MainForm(
-        IApplicationContext applicationContext,
+        IServiceProvider serviceProvider,
         IViewModel viewModel,
         IShortcutData shortcutData,
         IUndoRedoManager undoRedoManager)
     {
-        this.applicationContext = applicationContext;
+        this.serviceProvider = serviceProvider;
         this.viewModel = viewModel;
         this.shortcutData = shortcutData;
         this.undoRedoManager = undoRedoManager;
@@ -574,7 +575,9 @@ public partial class MainForm : Form
     private void ExitToolStripButton_Click(object sender, EventArgs e)
     {
         Close();
-        applicationContext.ExitProgram();
+
+        var applicationContext = serviceProvider.GetService<IApplicationContext>();
+        applicationContext?.ExitProgram();
     }
 
     private void DuplicateToolStripButton_Click(object sender, EventArgs e)
