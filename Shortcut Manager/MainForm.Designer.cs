@@ -45,6 +45,7 @@
             UndoButton = new ToolStripSplitButton();
             RedoButton = new ToolStripSplitButton();
             ExitToolStripButton = new ToolStripButton();
+            AboutButton = new ToolStripButton();
             IconLabel = new Label();
             TargetPathLabel = new Label();
             ArgumentsLabel = new Label();
@@ -171,7 +172,7 @@
             // 
             MainTableLayoutPanel.SetColumnSpan(MainToolStrip, 4);
             MainToolStrip.ImageScalingSize = new Size(24, 24);
-            MainToolStrip.Items.AddRange(new ToolStripItem[] { AddShortcutButton, AddFolderButton, DuplicateToolStripButton, DeleteButton, UndoButton, RedoButton, ExitToolStripButton });
+            MainToolStrip.Items.AddRange(new ToolStripItem[] { AddShortcutButton, AddFolderButton, DuplicateToolStripButton, DeleteButton, UndoButton, RedoButton, ExitToolStripButton, AboutButton });
             MainToolStrip.Location = new Point(0, 0);
             MainToolStrip.Name = "MainToolStrip";
             MainToolStrip.Size = new Size(800, 34);
@@ -250,6 +251,16 @@
             ExitToolStripButton.Size = new Size(67, 29);
             ExitToolStripButton.Text = "E&xit";
             ExitToolStripButton.Click += ExitToolStripButton_Click;
+            // 
+            // AboutButton
+            // 
+            AboutButton.Alignment = ToolStripItemAlignment.Right;
+            AboutButton.Image = Properties.Resources.Shortcut_Manager_16;
+            AboutButton.ImageTransparentColor = Color.Magenta;
+            AboutButton.Name = "AboutButton";
+            AboutButton.Size = new Size(90, 29);
+            AboutButton.Text = "About";
+            AboutButton.Click += AboutButton_Click;
             // 
             // IconLabel
             // 
@@ -485,5 +496,6 @@
         private ToolStripButton ExitToolStripButton;
         private ToolStripButton DuplicateToolStripButton;
         private ToolStripMenuItem DuplicateToolStripMenuItem;
+        private ToolStripButton AboutButton;
     }
 }

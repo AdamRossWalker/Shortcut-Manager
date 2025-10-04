@@ -600,7 +600,7 @@ public partial class MainForm : Form
 
         switch (e.KeyCode)
         {
-            case Keys.Z when e.Control &!e.Shift & !isTextBox:
+            case Keys.Z when e.Control & !e.Shift & !isTextBox:
                 UndoButton_Click();
                 e.SuppressKeyPress = true;
                 return;
@@ -611,5 +611,11 @@ public partial class MainForm : Form
                 e.SuppressKeyPress = true;
                 return;
         }
+    }
+
+    private void AboutButton_Click(object sender, EventArgs e)
+    {
+        using var aboutForm = new AboutForm();
+        aboutForm.ShowDialog();
     }
 }
