@@ -1,4 +1,5 @@
-﻿using ShortcutManager.Data;
+﻿using System.Diagnostics;
+using ShortcutManager.Data;
 using ShortcutManager.Helpers;
 using ShortcutManager.UndoRedo;
 
@@ -44,6 +45,7 @@ public sealed class ViewModel : ObservableObject, IViewModel
         Arguments = shortcut.Arguments;
         StartInPath = shortcut.StartInPath;
         ToolTip = shortcut.ToolTip;
+        WindowStyle = WindowStyleEnumToComboBoxIndex(shortcut.WindowStyle);
     }
 
     public IShortcutOrFolder? CurrentItem
@@ -240,6 +242,54 @@ public sealed class ViewModel : ObservableObject, IViewModel
                 shortcutData.ReplaceItem(
                     selectedNodeLocation,
                     "Tool Tip",
+                    oldItem,
+                    CurrentItem);
+            }
+
+            RaisePropertyChanged();
+        }
+    }
+
+    private static ProcessWindowStyle WindowStyleComboBoxIndexToEnum(int? index) =>
+        index switch
+        {
+            0 => ProcessWindowStyle.Normal,
+            1 => ProcessWindowStyle.Maximized,
+            2 => ProcessWindowStyle.Minimized,
+            3 => ProcessWindowStyle.Hidden,
+            _ => ProcessWindowStyle.Normal,
+        };
+
+    private static int WindowStyleEnumToComboBoxIndex(ProcessWindowStyle? windowStyle) =>
+        windowStyle switch
+        {
+            ProcessWindowStyle.Normal => 0,
+            ProcessWindowStyle.Maximized => 1,
+            ProcessWindowStyle.Minimized => 2,
+            ProcessWindowStyle.Hidden => 3,
+            _ => 0,
+        };
+
+    private ProcessWindowStyle? windowStyle;
+    public int? WindowStyle
+    {
+        get => WindowStyleEnumToComboBoxIndex(windowStyle);
+        set
+        {
+            var newWindowStyle = WindowStyleComboBoxIndexToEnum(value);
+
+            if (!SetFieldWithoutNotification(ref windowStyle, newWindowStyle))
+                return;
+
+            if (CurrentItem is ShortcutItem item && item.WindowStyle != newWindowStyle)
+            {
+                var oldItem = CurrentItem;
+
+                CurrentItem = item with { WindowStyle = newWindowStyle };
+
+                shortcutData.ReplaceItem(
+                    selectedNodeLocation,
+                    "Window Style",
                     oldItem,
                     CurrentItem);
             }

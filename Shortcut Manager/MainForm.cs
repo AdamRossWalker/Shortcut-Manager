@@ -36,6 +36,8 @@ public partial class MainForm : Form
 
         IconPictureBox.DataBindings.Add(nameof(PictureBox.Image), viewModel, nameof(ViewModel.ShortcutBitmap), true);
 
+        WindowStyleComboBox.DataBindings.Add(nameof(ComboBox.SelectedIndex), viewModel, nameof(ViewModel.WindowStyle), true);
+
         UndoButton.DataBindings.Add(nameof(ToolStripSplitButton.Enabled), viewModel, nameof(ViewModel.CanUndo));
         RedoButton.DataBindings.Add(nameof(ToolStripSplitButton.Enabled), viewModel, nameof(ViewModel.CanRedo));
     }
@@ -385,6 +387,9 @@ public partial class MainForm : Form
 
             ToolTipLabel.Visible = isShortcut;
             ToolTipTextBox.Visible = isShortcut;
+
+            WindowStyleLabel.Visible = isShortcut;
+            WindowStyleComboBox.Visible = isShortcut;
 
             DeleteButton.Enabled = isEither;
             MainTreeContextMenuAddDeleteButton.Enabled = isEither;

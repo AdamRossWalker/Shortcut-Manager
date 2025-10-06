@@ -19,6 +19,8 @@ public sealed record ShortcutItem : IShortcutOrFolder
 
     public required string? ToolTip { get; init; }
 
+    public ProcessWindowStyle? WindowStyle { get; init; }
+
     public void Execute()
     {
         if (String.IsNullOrWhiteSpace(TargetPath))
@@ -29,6 +31,7 @@ public sealed record ShortcutItem : IShortcutOrFolder
             FileName = TargetPath,
             Arguments = Arguments,
             WorkingDirectory = StartInPath,
+            WindowStyle = WindowStyle ?? ProcessWindowStyle.Normal,
         });
     }
 }

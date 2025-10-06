@@ -62,6 +62,8 @@
             StartInTextBox = new TextBox();
             StartInBrowseButton = new Button();
             ExecuteShortcutButton = new Button();
+            WindowStyleLabel = new Label();
+            WindowStyleComboBox = new ComboBox();
             BrowseFileDialog = new OpenFileDialog();
             BrowseFolderDialog = new FolderBrowserDialog();
             MainTreeeMenuStrip.SuspendLayout();
@@ -78,8 +80,8 @@
             MainTree.HideSelection = false;
             MainTree.Location = new Point(3, 37);
             MainTree.Name = "MainTree";
-            MainTableLayoutPanel.SetRowSpan(MainTree, 9);
-            MainTree.Size = new Size(320, 410);
+            MainTableLayoutPanel.SetRowSpan(MainTree, 10);
+            MainTree.Size = new Size(310, 410);
             MainTree.TabIndex = 0;
             MainTree.ItemDrag += MainTree_ItemDrag;
             MainTree.AfterSelect += MainTree_AfterSelect;
@@ -150,11 +152,13 @@
             MainTableLayoutPanel.Controls.Add(StartInLabel, 1, 6);
             MainTableLayoutPanel.Controls.Add(StartInTextBox, 2, 6);
             MainTableLayoutPanel.Controls.Add(StartInBrowseButton, 3, 6);
-            MainTableLayoutPanel.Controls.Add(ExecuteShortcutButton, 2, 8);
+            MainTableLayoutPanel.Controls.Add(ExecuteShortcutButton, 2, 9);
+            MainTableLayoutPanel.Controls.Add(WindowStyleLabel, 1, 8);
+            MainTableLayoutPanel.Controls.Add(WindowStyleComboBox, 2, 8);
             MainTableLayoutPanel.Dock = DockStyle.Fill;
             MainTableLayoutPanel.Location = new Point(0, 0);
             MainTableLayoutPanel.Name = "MainTableLayoutPanel";
-            MainTableLayoutPanel.RowCount = 10;
+            MainTableLayoutPanel.RowCount = 11;
             MainTableLayoutPanel.RowStyles.Add(new RowStyle());
             MainTableLayoutPanel.RowStyles.Add(new RowStyle());
             MainTableLayoutPanel.RowStyles.Add(new RowStyle());
@@ -163,7 +167,8 @@
             MainTableLayoutPanel.RowStyles.Add(new RowStyle());
             MainTableLayoutPanel.RowStyles.Add(new RowStyle());
             MainTableLayoutPanel.RowStyles.Add(new RowStyle());
-            MainTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            MainTableLayoutPanel.RowStyles.Add(new RowStyle());
+            MainTableLayoutPanel.RowStyles.Add(new RowStyle());
             MainTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             MainTableLayoutPanel.Size = new Size(800, 450);
             MainTableLayoutPanel.TabIndex = 0;
@@ -266,9 +271,9 @@
             // 
             IconLabel.AutoSize = true;
             IconLabel.Dock = DockStyle.Fill;
-            IconLabel.Location = new Point(329, 111);
+            IconLabel.Location = new Point(319, 111);
             IconLabel.Name = "IconLabel";
-            IconLabel.Size = new Size(100, 41);
+            IconLabel.Size = new Size(120, 41);
             IconLabel.TabIndex = 1;
             IconLabel.Text = "Icon";
             IconLabel.TextAlign = ContentAlignment.MiddleRight;
@@ -277,9 +282,9 @@
             // 
             TargetPathLabel.AutoSize = true;
             TargetPathLabel.Dock = DockStyle.Fill;
-            TargetPathLabel.Location = new Point(329, 189);
+            TargetPathLabel.Location = new Point(319, 189);
             TargetPathLabel.Name = "TargetPathLabel";
-            TargetPathLabel.Size = new Size(100, 41);
+            TargetPathLabel.Size = new Size(120, 41);
             TargetPathLabel.TabIndex = 5;
             TargetPathLabel.Text = "Target Path";
             TargetPathLabel.TextAlign = ContentAlignment.MiddleRight;
@@ -288,9 +293,9 @@
             // 
             ArgumentsLabel.AutoSize = true;
             ArgumentsLabel.Dock = DockStyle.Fill;
-            ArgumentsLabel.Location = new Point(329, 230);
+            ArgumentsLabel.Location = new Point(319, 230);
             ArgumentsLabel.Name = "ArgumentsLabel";
-            ArgumentsLabel.Size = new Size(100, 37);
+            ArgumentsLabel.Size = new Size(120, 37);
             ArgumentsLabel.TabIndex = 8;
             ArgumentsLabel.Text = "Arguments";
             ArgumentsLabel.TextAlign = ContentAlignment.MiddleRight;
@@ -299,9 +304,9 @@
             // 
             ToolTipLabel.AutoSize = true;
             ToolTipLabel.Dock = DockStyle.Fill;
-            ToolTipLabel.Location = new Point(329, 308);
+            ToolTipLabel.Location = new Point(319, 308);
             ToolTipLabel.Name = "ToolTipLabel";
-            ToolTipLabel.Size = new Size(100, 37);
+            ToolTipLabel.Size = new Size(120, 37);
             ToolTipLabel.TabIndex = 13;
             ToolTipLabel.Text = "ToolTip";
             ToolTipLabel.TextAlign = ContentAlignment.MiddleRight;
@@ -309,10 +314,10 @@
             // IconPictureBox
             // 
             IconPictureBox.Dock = DockStyle.Fill;
-            IconPictureBox.Location = new Point(435, 37);
+            IconPictureBox.Location = new Point(445, 37);
             IconPictureBox.Name = "IconPictureBox";
             MainTableLayoutPanel.SetRowSpan(IconPictureBox, 2);
-            IconPictureBox.Size = new Size(321, 112);
+            IconPictureBox.Size = new Size(311, 112);
             IconPictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
             IconPictureBox.TabIndex = 6;
             IconPictureBox.TabStop = false;
@@ -320,28 +325,28 @@
             // TargetPathTextBox
             // 
             TargetPathTextBox.Dock = DockStyle.Fill;
-            TargetPathTextBox.Location = new Point(435, 192);
+            TargetPathTextBox.Location = new Point(445, 192);
             TargetPathTextBox.MaxLength = 255;
             TargetPathTextBox.Name = "TargetPathTextBox";
-            TargetPathTextBox.Size = new Size(321, 31);
+            TargetPathTextBox.Size = new Size(311, 31);
             TargetPathTextBox.TabIndex = 6;
             // 
             // ToolTipTextBox
             // 
             ToolTipTextBox.Dock = DockStyle.Fill;
-            ToolTipTextBox.Location = new Point(435, 311);
+            ToolTipTextBox.Location = new Point(445, 311);
             ToolTipTextBox.MaxLength = 255;
             ToolTipTextBox.Name = "ToolTipTextBox";
-            ToolTipTextBox.Size = new Size(321, 31);
+            ToolTipTextBox.Size = new Size(311, 31);
             ToolTipTextBox.TabIndex = 14;
             // 
             // ArgumentsTextBox
             // 
             ArgumentsTextBox.Dock = DockStyle.Fill;
-            ArgumentsTextBox.Location = new Point(435, 233);
+            ArgumentsTextBox.Location = new Point(445, 233);
             ArgumentsTextBox.MaxLength = 255;
             ArgumentsTextBox.Name = "ArgumentsTextBox";
-            ArgumentsTextBox.Size = new Size(321, 31);
+            ArgumentsTextBox.Size = new Size(311, 31);
             ArgumentsTextBox.TabIndex = 9;
             // 
             // IconBrowseButton
@@ -374,9 +379,9 @@
             // 
             ShortcutNameLabel.AutoSize = true;
             ShortcutNameLabel.Dock = DockStyle.Fill;
-            ShortcutNameLabel.Location = new Point(329, 152);
+            ShortcutNameLabel.Location = new Point(319, 152);
             ShortcutNameLabel.Name = "ShortcutNameLabel";
-            ShortcutNameLabel.Size = new Size(100, 37);
+            ShortcutNameLabel.Size = new Size(120, 37);
             ShortcutNameLabel.TabIndex = 3;
             ShortcutNameLabel.Text = "Name";
             ShortcutNameLabel.TextAlign = ContentAlignment.MiddleRight;
@@ -384,19 +389,19 @@
             // ShortcutNameTextBox
             // 
             ShortcutNameTextBox.Dock = DockStyle.Fill;
-            ShortcutNameTextBox.Location = new Point(435, 155);
+            ShortcutNameTextBox.Location = new Point(445, 155);
             ShortcutNameTextBox.MaxLength = 255;
             ShortcutNameTextBox.Name = "ShortcutNameTextBox";
-            ShortcutNameTextBox.Size = new Size(321, 31);
+            ShortcutNameTextBox.Size = new Size(311, 31);
             ShortcutNameTextBox.TabIndex = 4;
             // 
             // StartInLabel
             // 
             StartInLabel.AutoSize = true;
             StartInLabel.Dock = DockStyle.Fill;
-            StartInLabel.Location = new Point(329, 267);
+            StartInLabel.Location = new Point(319, 267);
             StartInLabel.Name = "StartInLabel";
-            StartInLabel.Size = new Size(100, 41);
+            StartInLabel.Size = new Size(120, 41);
             StartInLabel.TabIndex = 10;
             StartInLabel.Text = "Start In";
             StartInLabel.TextAlign = ContentAlignment.MiddleRight;
@@ -404,10 +409,10 @@
             // StartInTextBox
             // 
             StartInTextBox.Dock = DockStyle.Fill;
-            StartInTextBox.Location = new Point(435, 270);
+            StartInTextBox.Location = new Point(445, 270);
             StartInTextBox.MaxLength = 255;
             StartInTextBox.Name = "StartInTextBox";
-            StartInTextBox.Size = new Size(321, 31);
+            StartInTextBox.Size = new Size(311, 31);
             StartInTextBox.TabIndex = 11;
             // 
             // StartInBrowseButton
@@ -428,13 +433,35 @@
             ExecuteShortcutButton.AutoSize = true;
             ExecuteShortcutButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ExecuteShortcutButton.Dock = DockStyle.Fill;
-            ExecuteShortcutButton.Location = new Point(435, 348);
+            ExecuteShortcutButton.Location = new Point(445, 387);
             ExecuteShortcutButton.Name = "ExecuteShortcutButton";
-            ExecuteShortcutButton.Size = new Size(321, 44);
+            ExecuteShortcutButton.Size = new Size(311, 35);
             ExecuteShortcutButton.TabIndex = 15;
             ExecuteShortcutButton.Text = "Execute";
             ExecuteShortcutButton.UseVisualStyleBackColor = true;
             ExecuteShortcutButton.Click += ExecuteShortcutButton_Click;
+            // 
+            // WindowStyleLabel
+            // 
+            WindowStyleLabel.AutoSize = true;
+            WindowStyleLabel.Dock = DockStyle.Fill;
+            WindowStyleLabel.Location = new Point(319, 345);
+            WindowStyleLabel.Name = "WindowStyleLabel";
+            WindowStyleLabel.Size = new Size(120, 39);
+            WindowStyleLabel.TabIndex = 16;
+            WindowStyleLabel.Text = "Window Style";
+            WindowStyleLabel.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // WindowStyleComboBox
+            // 
+            WindowStyleComboBox.Dock = DockStyle.Fill;
+            WindowStyleComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            WindowStyleComboBox.FormattingEnabled = true;
+            WindowStyleComboBox.Items.AddRange(new object[] { "Normal", "Maximized", "Minimized", "Hidden" });
+            WindowStyleComboBox.Location = new Point(445, 348);
+            WindowStyleComboBox.Name = "WindowStyleComboBox";
+            WindowStyleComboBox.Size = new Size(311, 33);
+            WindowStyleComboBox.TabIndex = 17;
             // 
             // BrowseFileDialog
             // 
@@ -498,5 +525,7 @@
         private ToolStripButton DuplicateToolStripButton;
         private ToolStripMenuItem DuplicateToolStripMenuItem;
         private ToolStripButton AboutButton;
+        private Label WindowStyleLabel;
+        private ComboBox WindowStyleComboBox;
     }
 }
