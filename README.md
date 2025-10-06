@@ -1,4 +1,4 @@
-![Logo](Screenshots\shortcut-manager-logo.png "Logo")
+![Logo](Screenshots/shortcut-manager-logo.png "Logo")
 
 # Shortcut Manager
 
@@ -6,9 +6,9 @@ This is a small WinForms application designed to replicate the old Windows task 
 
 This application is useful if you have many complex shortcuts that you need to organise, and/or you were reliant on the old behaviour.
 
-![Main Window](Screenshots\shortcut-manager-main-window.png "Main Window")
+![Main Window](Screenshots/shortcut-manager-main-window.png "Main Window")
 
-![Popup Menu](Screenshots\shortcut-manager-popup.png "Popup Menu")
+![Popup Menu](Screenshots/shortcut-manager-popup.png "Popup Menu")
 
 ### Installation
 
