@@ -32,9 +32,10 @@ partial class AboutForm
         tableLayoutPanel1 = new TableLayoutPanel();
         MainPictureBox = new PictureBox();
         VersionLabel = new Label();
-        DetailsLabel = new Label();
         TitleLabel = new Label();
         CloseButton = new Button();
+        DetailsTextBox = new TextBox();
+        ProjectLinkLabel = new LinkLabel();
         tableLayoutPanel1.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)MainPictureBox).BeginInit();
         SuspendLayout();
@@ -42,33 +43,36 @@ partial class AboutForm
         // tableLayoutPanel1
         // 
         tableLayoutPanel1.ColumnCount = 2;
-        tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
         tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+        tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
         tableLayoutPanel1.Controls.Add(MainPictureBox, 0, 0);
         tableLayoutPanel1.Controls.Add(VersionLabel, 1, 1);
-        tableLayoutPanel1.Controls.Add(DetailsLabel, 1, 2);
         tableLayoutPanel1.Controls.Add(TitleLabel, 1, 0);
-        tableLayoutPanel1.Controls.Add(CloseButton, 1, 3);
+        tableLayoutPanel1.Controls.Add(CloseButton, 0, 4);
+        tableLayoutPanel1.Controls.Add(DetailsTextBox, 1, 2);
+        tableLayoutPanel1.Controls.Add(ProjectLinkLabel, 1, 3);
         tableLayoutPanel1.Dock = DockStyle.Fill;
         tableLayoutPanel1.Location = new Point(0, 0);
         tableLayoutPanel1.Name = "tableLayoutPanel1";
-        tableLayoutPanel1.RowCount = 4;
+        tableLayoutPanel1.RowCount = 5;
+        tableLayoutPanel1.RowStyles.Add(new RowStyle());
+        tableLayoutPanel1.RowStyles.Add(new RowStyle());
         tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
         tableLayoutPanel1.RowStyles.Add(new RowStyle());
         tableLayoutPanel1.RowStyles.Add(new RowStyle());
-        tableLayoutPanel1.RowStyles.Add(new RowStyle());
-        tableLayoutPanel1.Size = new Size(740, 433);
+        tableLayoutPanel1.Size = new Size(826, 433);
         tableLayoutPanel1.TabIndex = 0;
         // 
         // MainPictureBox
         // 
         MainPictureBox.Dock = DockStyle.Fill;
         MainPictureBox.Image = Properties.Resources.Shortcut_Manager_256;
-        MainPictureBox.Location = new Point(3, 3);
+        MainPictureBox.Location = new Point(0, 0);
+        MainPictureBox.Margin = new Padding(0);
         MainPictureBox.Name = "MainPictureBox";
         tableLayoutPanel1.SetRowSpan(MainPictureBox, 4);
-        MainPictureBox.Size = new Size(414, 427);
-        MainPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
+        MainPictureBox.Size = new Size(256, 372);
+        MainPictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
         MainPictureBox.TabIndex = 0;
         MainPictureBox.TabStop = false;
         // 
@@ -77,35 +81,23 @@ partial class AboutForm
         VersionLabel.AutoSize = true;
         VersionLabel.Dock = DockStyle.Fill;
         VersionLabel.Font = new Font("Segoe UI", 15F);
-        VersionLabel.Location = new Point(423, 206);
+        VersionLabel.Location = new Point(261, 46);
+        VersionLabel.Margin = new Padding(5, 0, 5, 0);
         VersionLabel.Name = "VersionLabel";
-        VersionLabel.Padding = new Padding(20);
-        VersionLabel.Size = new Size(314, 81);
+        VersionLabel.Size = new Size(560, 41);
         VersionLabel.TabIndex = 1;
         VersionLabel.Text = "Version";
         VersionLabel.TextAlign = ContentAlignment.MiddleCenter;
-        // 
-        // DetailsLabel
-        // 
-        DetailsLabel.AutoSize = true;
-        DetailsLabel.Dock = DockStyle.Fill;
-        DetailsLabel.Location = new Point(423, 287);
-        DetailsLabel.Name = "DetailsLabel";
-        DetailsLabel.Padding = new Padding(20);
-        DetailsLabel.Size = new Size(314, 65);
-        DetailsLabel.TabIndex = 2;
-        DetailsLabel.Text = "Adam Walker 2025";
-        DetailsLabel.TextAlign = ContentAlignment.MiddleCenter;
         // 
         // TitleLabel
         // 
         TitleLabel.AutoSize = true;
         TitleLabel.Dock = DockStyle.Fill;
         TitleLabel.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
-        TitleLabel.Location = new Point(423, 0);
+        TitleLabel.Location = new Point(261, 5);
+        TitleLabel.Margin = new Padding(5, 5, 5, 0);
         TitleLabel.Name = "TitleLabel";
-        TitleLabel.Padding = new Padding(20);
-        TitleLabel.Size = new Size(314, 206);
+        TitleLabel.Size = new Size(560, 41);
         TitleLabel.TabIndex = 3;
         TitleLabel.Text = "Shortcut Manager";
         TitleLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -114,14 +106,43 @@ partial class AboutForm
         // 
         CloseButton.AutoSize = true;
         CloseButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+        tableLayoutPanel1.SetColumnSpan(CloseButton, 2);
         CloseButton.Dock = DockStyle.Fill;
-        CloseButton.Location = new Point(423, 355);
+        CloseButton.Location = new Point(3, 375);
         CloseButton.Name = "CloseButton";
-        CloseButton.Padding = new Padding(20);
-        CloseButton.Size = new Size(314, 75);
+        CloseButton.Padding = new Padding(10);
+        CloseButton.Size = new Size(820, 55);
         CloseButton.TabIndex = 4;
         CloseButton.Text = "Close";
         CloseButton.UseVisualStyleBackColor = true;
+        // 
+        // DetailsTextBox
+        // 
+        DetailsTextBox.BorderStyle = BorderStyle.None;
+        DetailsTextBox.Dock = DockStyle.Fill;
+        DetailsTextBox.Location = new Point(261, 92);
+        DetailsTextBox.Margin = new Padding(5);
+        DetailsTextBox.Multiline = true;
+        DetailsTextBox.Name = "DetailsTextBox";
+        DetailsTextBox.ReadOnly = true;
+        DetailsTextBox.ScrollBars = ScrollBars.Vertical;
+        DetailsTextBox.Size = new Size(560, 240);
+        DetailsTextBox.TabIndex = 5;
+        DetailsTextBox.Text = resources.GetString("DetailsTextBox.Text");
+        // 
+        // ProjectLinkLabel
+        // 
+        ProjectLinkLabel.AutoEllipsis = true;
+        ProjectLinkLabel.AutoSize = true;
+        ProjectLinkLabel.Dock = DockStyle.Fill;
+        ProjectLinkLabel.Location = new Point(259, 337);
+        ProjectLinkLabel.Name = "ProjectLinkLabel";
+        ProjectLinkLabel.Padding = new Padding(5);
+        ProjectLinkLabel.Size = new Size(564, 35);
+        ProjectLinkLabel.TabIndex = 6;
+        ProjectLinkLabel.TabStop = true;
+        ProjectLinkLabel.Text = "https://github.com/AdamRossWalker/Shortcut-Manager";
+        ProjectLinkLabel.LinkClicked += ProjectLinkLabel_LinkClicked;
         // 
         // AboutForm
         // 
@@ -129,7 +150,7 @@ partial class AboutForm
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
         CancelButton = CloseButton;
-        ClientSize = new Size(740, 433);
+        ClientSize = new Size(826, 433);
         Controls.Add(tableLayoutPanel1);
         DoubleBuffered = true;
         Icon = (Icon)resources.GetObject("$this.Icon");
@@ -147,7 +168,8 @@ partial class AboutForm
     private TableLayoutPanel tableLayoutPanel1;
     private PictureBox MainPictureBox;
     private Label VersionLabel;
-    private Label DetailsLabel;
     private Label TitleLabel;
     private Button CloseButton;
+    private TextBox DetailsTextBox;
+    private LinkLabel ProjectLinkLabel;
 }
