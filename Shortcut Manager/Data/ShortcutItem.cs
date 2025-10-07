@@ -21,6 +21,8 @@ public sealed record ShortcutItem : IShortcutOrFolder
 
     public ProcessWindowStyle? WindowStyle { get; init; }
 
+    public bool IsUsingShell { get; init; } = true;
+
     public void Execute()
     {
         if (String.IsNullOrWhiteSpace(TargetPath))
@@ -32,6 +34,7 @@ public sealed record ShortcutItem : IShortcutOrFolder
             Arguments = Arguments,
             WorkingDirectory = StartInPath,
             WindowStyle = WindowStyle ?? ProcessWindowStyle.Normal,
+            UseShellExecute = IsUsingShell,
         });
     }
 }

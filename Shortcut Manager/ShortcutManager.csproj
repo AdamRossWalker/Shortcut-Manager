@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <ShortcutManagerVersion>1.0.0</ShortcutManagerVersion>
+        <ShortcutManagerVersion>1.2.0</ShortcutManagerVersion>
     </PropertyGroup>
 
     <PropertyGroup>

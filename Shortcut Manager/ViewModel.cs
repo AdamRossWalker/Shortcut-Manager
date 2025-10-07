@@ -46,6 +46,7 @@ public sealed class ViewModel : ObservableObject, IViewModel
         StartInPath = shortcut.StartInPath;
         ToolTip = shortcut.ToolTip;
         WindowStyle = WindowStyleEnumToComboBoxIndex(shortcut.WindowStyle);
+        IsUsingShell = shortcut.IsUsingShell;
     }
 
     public IShortcutOrFolder? CurrentItem
@@ -290,6 +291,32 @@ public sealed class ViewModel : ObservableObject, IViewModel
                 shortcutData.ReplaceItem(
                     selectedNodeLocation,
                     "Window Style",
+                    oldItem,
+                    CurrentItem);
+            }
+
+            RaisePropertyChanged();
+        }
+    }
+
+    private bool isUsingShell;
+    public bool IsUsingShell
+    {
+        get => isUsingShell;
+        set
+        {
+            if (!SetFieldWithoutNotification(ref isUsingShell, value))
+                return;
+
+            if (CurrentItem is ShortcutItem item && item.IsUsingShell != value)
+            {
+                var oldItem = CurrentItem;
+
+                CurrentItem = item with { IsUsingShell = value };
+
+                shortcutData.ReplaceItem(
+                    selectedNodeLocation,
+                    "Use Shell?",
                     oldItem,
                     CurrentItem);
             }

@@ -34,12 +34,17 @@ public partial class MainForm : Form
         AddTextBoxBinding(StartInTextBox, nameof(ViewModel.StartInPath));
         AddTextBoxBinding(ToolTipTextBox, nameof(ViewModel.ToolTip));
 
-        IconPictureBox.DataBindings.Add(nameof(PictureBox.Image), viewModel, nameof(ViewModel.ShortcutBitmap), true);
+        IconPictureBox.DataBindings.Add(nameof(PictureBox.Image), viewModel, nameof(ViewModel.ShortcutBitmap), formattingEnabled: true);
 
-        WindowStyleComboBox.DataBindings.Add(nameof(ComboBox.SelectedIndex), viewModel, nameof(ViewModel.WindowStyle), true);
+        WindowStyleComboBox.DataBindings.Add(nameof(ComboBox.SelectedIndex), viewModel, nameof(ViewModel.WindowStyle), formattingEnabled: true);
+
+        LaunchViaShellCheckBox.DataBindings.Add(nameof(CheckBox.Checked), viewModel, nameof(ViewModel.IsUsingShell), formattingEnabled: true);
 
         UndoButton.DataBindings.Add(nameof(ToolStripSplitButton.Enabled), viewModel, nameof(ViewModel.CanUndo));
         RedoButton.DataBindings.Add(nameof(ToolStripSplitButton.Enabled), viewModel, nameof(ViewModel.CanRedo));
+        
+        // For some reason this won't stick in the designer.
+        LaunchViaShellCheckBox.AutoEllipsis = true;
     }
 
     // From https://stackoverflow.com/a/77233
@@ -390,6 +395,9 @@ public partial class MainForm : Form
 
             WindowStyleLabel.Visible = isShortcut;
             WindowStyleComboBox.Visible = isShortcut;
+
+            LaunchViaShellLabel.Visible = isShortcut;
+            LaunchViaShellCheckBox.Visible = isShortcut;
 
             DeleteButton.Enabled = isEither;
             MainTreeContextMenuAddDeleteButton.Enabled = isEither;
